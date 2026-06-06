@@ -1,50 +1,60 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Cami Finance App Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Premium & Dynamic UX (WOW Factor)
+Every user interface must deliver a modern, visually stunning, and premium first impression. Avoid generic colors (e.g., plain red, blue, green) and instead utilize curated, harmonious palettes (e.g., tailored HSL/RGB colors, sleek dark modes, and smooth gradients). Always import and use modern typography (e.g., Google Fonts like Inter, Outfit, or Roboto) rather than relying on browser defaults. Placeholders are strictly prohibited.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Dynamic UX & Micro-Animations
+The interface must feel alive, responsive, and highly interactive. Hover effects, active states, and subtle micro-animations for transitions and status updates must be implemented to guide and delight the user. State transitions (e.g., page navigation, filter updates, transaction addition) should be animated smoothly to maintain visual continuity.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Semantic HTML5 & Vanilla CSS
+Structure the web application using clean, semantic HTML5 elements (e.g., `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<footer>`). All styling must be written in Vanilla CSS to ensure maximum control, efficiency, and layout accuracy. Avoid Tailwind CSS or other utility-first libraries unless explicitly requested by the USER. A core design system of CSS variables (custom properties) must be established in `index.css` before designing any components.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Component-Driven & Responsive Architecture
+Develop the application using focused, modular, and reusable components. Global layout configurations, layout files, and view routers must be kept separate from presentational components. Responsive design (mobile-first layout using CSS Grid and Flexbox) is non-negotiable, ensuring a seamless experience across mobile, tablet, and desktop screens.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. SEO, Accessibility, & Testability
+Every page must adhere to basic SEO and accessibility (a11y) standards:
+- Include proper, descriptive title tags and meta descriptions.
+- Ensure correct heading hierarchy with exactly one `<h1>` per page.
+- Apply high-contrast text and interactive focus states.
+- Assign unique, descriptive IDs to all interactive elements to facilitate automated and browser-based testing.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Technology Stack & Performance Standards
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Technology Stack
+- **Core Framework & Languages**: HTML5, Vanilla CSS3 (Custom Properties), React, and Next.js.
+- **Build Tooling**: Next.js for server-side rendering, static site generation, and optimized client-side performance.
+- **Dependencies**: Keep external dependencies minimal and highly justified.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### Performance & Security
+- Minimal asset payloads and optimized CSS/JS compilation.
+- Defer/async non-critical scripts.
+- Secure client-side state handling and inputs validation.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow & Quality Gates
+
+### Phase 1: Understand & Plan
+- Define the page/feature structure and visual requirements first.
+- Create or update mockups and color palette specifications.
+
+### Phase 2: Design Foundation
+- Maintain `index.css` with CSS variables for fonts, spacing, colors, shadows, and base typography.
+
+### Phase 3: Component Development
+- Build individual UI components using classes mapped to CSS variables. Avoid ad-hoc inline styles.
+
+### Phase 4: Page Assembly & Routing
+- Integrate UI components into pages with a responsive grid/flex layout and state-based page switching/routing.
+
+### Phase 5: Polish & Verification
+- Review visual flows, add smooth micro-animations, and test accessibility.
+- Verify that elements have unique IDs and that the page loads quickly without visual layout shifts.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+- This Constitution is the supreme authority for design and coding guidelines in the Cami Finance App repository.
+- Deviating from these principles (e.g., using a library like Tailwind CSS, neglecting responsiveness) is only permitted if explicitly requested and approved by the user.
+- Any amendments to this Constitution require updating the version number, dates, and committing changes to the version control system.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-06-05 | **Last Amended**: 2026-06-05
