@@ -21,6 +21,7 @@ As a user, I want to create, view, update, and delete my payment slips, categori
 1. **Given** the user is on the dashboard or payments page, **When** they click "Adicionar Boleto", fill in the form (Title: "Electricity Bill", Amount: "R$ 120,00", Category: "Utilities", Due Date: "15/06/2026") and save, **Then** the slip is added to the database and appears in the list under the "Utilities" category.
 2. **Given** a listed payment slip, **When** the user edits its status to "Paid", **Then** the database updates, and the UI visually indicates it is paid (with a checked state or color shift) without reloading the page.
 3. **Given** a listed payment slip, **When** the user clicks "Delete" and confirms, **Then** it is permanently deleted from the database and removed from the screen.
+4. **Given** the user is creating or editing a payment slip, **When** they attach a bill document (PDF or image file) and save, **Then** the document is persisted in storage, linked to the slip, and can be viewed or downloaded from the slip details.
 
 ---
 
