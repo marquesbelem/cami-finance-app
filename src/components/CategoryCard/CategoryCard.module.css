@@ -1,0 +1,234 @@
+/* ── CategoryCard.module.css ──────────────────────────────────────────────── */
+
+/* ── Card container ───────────────────────────────────────────────────────── */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-strong);
+}
+
+/* Delete fade-out animation */
+.cardDeleting {
+  animation: fadeOutScale 300ms ease forwards;
+}
+
+@keyframes fadeOutScale {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* ── Accent bar (left edge color strip) ───────────────────────────────────── */
+.accentBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ── Card body ────────────────────────────────────────────────────────────── */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-5) var(--space-4) var(--space-6);
+  flex: 1;
+}
+
+/* ── Top row: icon + swatch + system badge ────────────────────────────────── */
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+  transition: background var(--transition-base);
+}
+
+.card:hover .iconWrap {
+  background: var(--color-bg-overlay);
+}
+
+.swatch {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  border: 2px solid hsl(0 0% 100% / 0.12);
+  flex-shrink: 0;
+  cursor: default;
+  transition: box-shadow var(--transition-base);
+}
+
+.card:hover .swatch {
+  box-shadow: 0 0 10px currentColor;
+}
+
+.systemBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── Category name ────────────────────────────────────────────────────────── */
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+/* ── Slip count badge ─────────────────────────────────────────────────────── */
+.slipCount {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+/* ── Action buttons ───────────────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5) var(--space-3) var(--space-6);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.actionBtn:not(:disabled):active {
+  transform: scale(0.92);
+}
+
+.editBtn {
+  color: var(--color-text-secondary);
+  background: transparent;
+}
+
+.editBtn:hover {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+  border-color: var(--color-border-brand);
+}
+
+.deleteBtn {
+  color: var(--color-text-tertiary);
+  background: transparent;
+}
+
+.deleteBtn:hover {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+  border-color: var(--color-danger-dim);
+}
+
+.deleteConfirm {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  animation: pulse-danger 0.8s ease-in-out infinite;
+}
+
+@keyframes pulse-danger {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(0, 84%, 60%, 0.3); }
+  50%       { box-shadow: 0 0 0 4px hsl(0, 84%, 60%, 0); }
+}
+
+.deleteDisabled {
+  color: var(--color-text-tertiary);
+  background: transparent;
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* ── Confirmation banner ──────────────────────────────────────────────────── */
+.confirmBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5) var(--space-3) var(--space-6);
+  background: var(--color-danger-subtle);
+  border-top: 1px solid var(--color-danger-dim);
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+  animation: slideDown 200ms ease both;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cancelConfirmBtn {
+  flex-shrink: 0;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  background: var(--color-danger);
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  transition: background var(--transition-fast);
+}
+
+.cancelConfirmBtn:hover {
+  background: var(--color-danger-dim);
+}

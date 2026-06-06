@@ -11,11 +11,13 @@ datasource db {
 }
 
 model Category {
-  id        String        @id @default(uuid())
-  name      String        @unique
-  colorCode String        // CSS color variable or hex code
-  iconRef   String        // Lucide icon name
-  slips     PaymentSlip[]
+  id              String        @id @default(uuid())
+  name            String        @unique
+  colorCode       String        // CSS color variable or hex code
+  iconRef         String        // Lucide icon name
+  isSystemDefault Boolean       @default(false) // Protects seed categories from deletion
+  createdAt       DateTime      @default(now())  // Audit timestamp
+  slips           PaymentSlip[]
 }
 
 model PaymentSlip {
@@ -29,7 +31,8 @@ model PaymentSlip {
   createdAt           DateTime @default(now())
 
   categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  //                                                                            ^-- CHANGED: API layer handles reassignment before delete
 }
 
 model Achievement {

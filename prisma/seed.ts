@@ -3,24 +3,25 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // ── Default Categories ────────────────────────────────────────────────────
+  // ── Default Categories (System-Protected) ────────────────────────────────
   const categories = [
-    { name: "Aluguel", colorCode: "#6C63FF", iconRef: "Home" },
-    { name: "Alimentação", colorCode: "#22C55E", iconRef: "UtensilsCrossed" },
-    { name: "Utilidades", colorCode: "#F59E0B", iconRef: "Zap" },
-    { name: "Cartão de Crédito", colorCode: "#EF4444", iconRef: "CreditCard" },
-    { name: "Lazer", colorCode: "#EC4899", iconRef: "Music" },
+    { name: "Sem Categoria", colorCode: "#6b7280", iconRef: "FolderOpen", isSystemDefault: true },
+    { name: "Moradia",       colorCode: "#f59e0b", iconRef: "Home",       isSystemDefault: true },
+    { name: "Utilidades",    colorCode: "#3b82f6", iconRef: "Zap",        isSystemDefault: true },
+    { name: "Alimentação",   colorCode: "#10b981", iconRef: "Utensils",   isSystemDefault: true },
+    { name: "Lazer",         colorCode: "#8b5cf6", iconRef: "Music",      isSystemDefault: true },
+    { name: "Cartão de Crédito", colorCode: "#ef4444", iconRef: "CreditCard", isSystemDefault: true },
   ];
 
   for (const cat of categories) {
     await prisma.category.upsert({
-      where: { name: cat.name },
-      update: {},
+      where:  { name: cat.name },
+      update: { isSystemDefault: cat.isSystemDefault },
       create: cat,
     });
   }
 
-  console.log(`✅ Seeded ${categories.length} categories`);
+  console.log(`✅ Seeded ${categories.length} system-default categories`);
 
   // ── Singleton UserStats ───────────────────────────────────────────────────
   await prisma.userStats.upsert({
