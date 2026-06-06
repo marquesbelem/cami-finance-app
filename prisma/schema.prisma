@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String        @id @default(uuid())
+  name      String        @unique
+  colorCode String        // CSS color variable or hex code
+  iconRef   String        // Lucide icon name
+  slips     PaymentSlip[]
+}
+
+model PaymentSlip {
+  id                  String   @id @default(uuid())
+  title               String
+  amount              Float    // Payment amount in standard decimal
+  dueDate             DateTime
+  status              String   // "Paid" or "Pending"
+  isCreditCardPayment Boolean  @default(false)
+  documentPath        String?  // Optional filesystem path to uploaded PDF/Image
+  createdAt           DateTime @default(now())
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id                 String    @id @default(uuid())
+  title              String    @unique
+  description        String
+  type               String    // "STREAK", "CARD_THRESHOLD", "SAVINGS"
+  conditionValue     Float     // Threshold limit or target days
+  isUnlocked         Boolean   @default(false)
+  progressPercentage Float     @default(0.0)
+  unlockedAt         DateTime?
+}
+
+model UserStats {
+  id                String @id @default("singleton")
+  monthlyBudgetLimit Float  @default(2000.0)
+  totalCreditLimit   Float  @default(1000.0)
+  currentStreakDays  Int    @default(0)
+}
