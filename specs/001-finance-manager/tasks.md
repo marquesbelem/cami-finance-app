@@ -18,9 +18,9 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure directories (prisma, public/uploads, src/app, src/components, src/lib)
-- [ ] T002 Initialize Next.js project and install dependencies (prisma, @prisma/client, recharts, lucide-react) in package.json
-- [ ] T003 [P] Configure Prisma datasource configuration in prisma/schema.prisma
+- [x] T001 Create project structure directories (prisma, public/uploads, src/app, src/components, src/lib)
+- [x] T002 Initialize Next.js project and install dependencies (prisma, @prisma/client, recharts, lucide-react) in package.json
+- [x] T003 [P] Configure Prisma datasource configuration in prisma/schema.prisma
 
 ---
 
@@ -30,11 +30,11 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Define SQLite data models (Category, PaymentSlip, Achievement, UserStats) in prisma/schema.prisma
-- [ ] T005 Implement database seed script to populate default categories (Rent, Food, Utilities, Credit Card) in prisma/seed.ts
-- [ ] T006 [P] Implement Prisma client connection helper in src/lib/prisma.ts
-- [ ] T007 [P] Establish global CSS variables (Harmony color palette, dark mode default, fonts) in src/app/globals.css
-- [ ] T008 Setup default page layout structure in src/app/layout.tsx
+- [x] T004 Define SQLite data models (Category, PaymentSlip, Achievement, UserStats) in prisma/schema.prisma
+- [x] T005 Implement database seed script to populate default categories (Rent, Food, Utilities, Credit Card) in prisma/seed.ts
+- [x] T006 [P] Implement Prisma client connection helper in src/lib/prisma.ts
+- [x] T007 [P] Establish global CSS variables (Harmony color palette, dark mode default, fonts) in src/app/globals.css
+- [x] T008 Setup default page layout structure in src/app/layout.tsx
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -47,12 +47,12 @@
 **Independent Test**: The user can navigate to the payments section, add a slip with an amount, due date, attach a bill document, and category, verify it appears in the list, edit its details, and delete it.
 
 ### Implementation for User Story 1
-- [ ] T009 [P] [US1] Create API endpoint for creating and retrieving slips in src/app/api/slips/route.ts
-- [ ] T010 [P] [US1] Create API endpoint for updating and deleting slips in src/app/api/slips/[id]/route.ts
-- [ ] T011 [US1] Implement file upload utility to save PDF/Image files locally to public/uploads/ in src/lib/upload.ts
-- [ ] T012 [P] [US1] Build "Adicionar Boleto" form component and styles in src/components/AdicionarBoleto/AdicionarBoleto.tsx and src/components/AdicionarBoleto/AdicionarBoleto.module.css
-- [ ] T013 [P] [US1] Build bill list and slip detail items in src/components/SlipList/SlipItem.tsx and src/components/SlipList/SlipItem.module.css
-- [ ] T014 [US1] Integrate CRUD form and list components on the main dashboard view in src/app/page.tsx
+- [x] T009 [P] [US1] Create API endpoint for creating and retrieving slips in src/app/api/slips/route.ts
+- [x] T010 [P] [US1] Create API endpoint for updating and deleting slips in src/app/api/slips/[id]/route.ts
+- [x] T011 [US1] Implement file upload utility to save PDF/Image files locally to public/uploads/ in src/lib/upload.ts
+- [x] T012 [P] [US1] Build "Adicionar Boleto" form component and styles in src/components/AdicionarBoleto/AdicionarBoleto.tsx and src/components/AdicionarBoleto/AdicionarBoleto.module.css
+- [x] T013 [P] [US1] Build bill list and slip detail items in src/components/SlipList/SlipItem.tsx and src/components/SlipList/SlipItem.module.css
+- [x] T014 [US1] Integrate CRUD form and list components on the main dashboard view in src/app/page.tsx
 
 **Checkpoint**: At this point, User Story 1 (MVP) is fully functional and testable.
 
@@ -65,11 +65,11 @@
 **Independent Test**: The user can select different months from a dropdown and verify the charts and totals change to match only the slips for that month.
 
 ### Implementation for User Story 2
-- [ ] T015 [P] [US2] Update API endpoint to support month filtering in src/app/api/slips/route.ts
-- [ ] T016 [US2] Add month selection state and controls in src/app/page.tsx
-- [ ] T017 [P] [US2] Create charts visualization dashboard using Recharts in src/components/DashboardCharts/DashboardCharts.tsx and src/components/DashboardCharts/DashboardCharts.module.css
-- [ ] T018 [US2] Add monthly summary metrics cards (Total Spent, Pending Bills) in src/components/DashboardCharts/SummaryCards.tsx
-- [ ] T019 [US2] Integrate chart components with month selection on the main dashboard in src/app/page.tsx
+- [x] T015 [P] [US2] Update API endpoint to support month filtering in src/app/api/slips/route.ts
+- [x] T016 [US2] Add month selection state and controls in src/app/page.tsx
+- [x] T017 [P] [US2] Create charts visualization dashboard using Recharts in src/components/DashboardCharts/DashboardCharts.tsx and src/components/DashboardCharts/DashboardCharts.module.css
+- [x] T018 [US2] Add monthly summary metrics cards (Total Spent, Pending Bills) in src/components/DashboardCharts/SummaryCards.tsx
+- [x] T019 [US2] Integrate chart components with month selection on the main dashboard in src/app/page.tsx
 
 **Checkpoint**: User Stories 1 and 2 work together, providing a complete monthly filterable CRUD dashboard.
 
@@ -82,12 +82,12 @@
 **Independent Test**: The user can view achievements, customize card limits, write rules, and see dynamic streak logs.
 
 ### Implementation for User Story 3
-- [ ] T020 [P] [US3] Create user statistics/limits API endpoint in src/app/api/stats/route.ts
-- [ ] T021 [P] [US3] Create user custom achievements API endpoint in src/app/api/achievements/route.ts
-- [ ] T022 [US3] Implement validation triggers to compute achievement progress on slip mutations in src/lib/achievements.ts
-- [ ] T023 [P] [US3] Build Achievements Panel UI to list progress and create custom goals in src/components/Achievements/AchievementsPanel.tsx and src/components/Achievements/AchievementsPanel.module.css
-- [ ] T024 [US3] Add toast celebrations and unlock particle alerts in src/components/Achievements/Celebration.tsx
-- [ ] T025 [US3] Integrate Achievements Panel into the dashboard sidebar in src/app/page.tsx
+- [x] T020 [P] [US3] Create user statistics/limits API endpoint in src/app/api/stats/route.ts
+- [x] T021 [P] [US3] Create user custom achievements API endpoint in src/app/api/achievements/route.ts
+- [x] T022 [US3] Implement validation triggers to compute achievement progress on slip mutations in src/lib/achievements.ts
+- [x] T023 [P] [US3] Build Achievements Panel UI to list progress and create custom goals in src/components/Achievements/AchievementsPanel.tsx and src/components/Achievements/AchievementsPanel.module.css
+- [x] T024 [US3] Add toast celebrations and unlock particle alerts in src/components/Achievements/Celebration.tsx
+- [x] T025 [US3] Integrate Achievements Panel into the dashboard sidebar in src/app/page.tsx
 
 **Checkpoint**: Full application feature set is implemented.
 
@@ -97,9 +97,9 @@
 
 **Purpose**: Global responsiveness adjustments, transitions, and user documentation
 
-- [ ] T026 [P] Update user setup and startup guide in README.md
-- [ ] T027 Add layout transitions, micro-animations on interactive states, and hover effects in src/app/globals.css
-- [ ] T028 Run end-to-end verification checklist in specs/001-finance-manager/quickstart.md
+- [x] T026 [P] Update user setup and startup guide in README.md
+- [x] T027 Add layout transitions, micro-animations on interactive states, and hover effects in src/app/globals.css
+- [x] T028 Run end-to-end verification checklist in specs/001-finance-manager/quickstart.md
 
 ---
 
