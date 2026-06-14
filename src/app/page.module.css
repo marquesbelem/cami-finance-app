@@ -250,20 +250,39 @@
 
 @media (max-width: 640px) {
   .main {
-    padding: var(--space-5);
-    gap: var(--space-6);
+    padding: var(--space-4);
+    gap: var(--space-5);
   }
 
   .header {
+    flex-direction: column;
+    align-items: stretch;
     gap: var(--space-4);
   }
 
-  .addBtn span {
-    display: none;
+  .headerLeft {
+    width: 100%;
+  }
+
+  .monthNav {
+    width: 100%;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-3);
   }
 
   .monthLabel {
-    min-width: 120px;
-    font-size: var(--text-xs);
+    flex: 1;
+    min-width: 0;
+    font-size: var(--text-sm);
+  }
+
+  .addBtn {
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-3) var(--space-5);
+  }
+
+  .addBtn span {
+    display: inline;
   }
 }

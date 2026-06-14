@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     let stats = await prisma.userStats.findUnique({
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[GET /api/stats]", error);
     return NextResponse.json(
-      { error: "Failed to fetch stats" },
+      { error: "Falha ao carregar as estatísticas" },
       { status: 500 }
     );
   }
@@ -66,7 +66,7 @@ export async function PUT(request: NextRequest) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -101,7 +101,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error("[PUT /api/stats]", error);
     return NextResponse.json(
-      { error: "Failed to update stats" },
+      { error: "Falha ao atualizar as estatísticas" },
       { status: 500 }
     );
   }

@@ -311,3 +311,9 @@
     min-height: 0; /* allow flex child to shrink below content size */
   }
 }
+
+.requiredAsterisk {
+  color: var(--color-danger);
+  margin-left: var(--space-1);
+  font-weight: bold;
+}

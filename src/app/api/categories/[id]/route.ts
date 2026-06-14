@@ -20,7 +20,7 @@ export async function PUT(request: Request, context: RouteContext) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { id } = await context.params;
@@ -36,20 +36,20 @@ export async function PUT(request: Request, context: RouteContext) {
       where: { id, userId },
     });
     if (!category) {
-      return NextResponse.json({ error: "Category not found or unauthorized." }, { status: 404 });
+      return NextResponse.json({ error: "Categoria não encontrada ou não autorizada." }, { status: 404 });
     }
 
     // ── Validate provided fields ────────────────────────────────────────────
     if (name !== undefined) {
       if (!name.trim()) {
         return NextResponse.json(
-          { error: "Category name is required and must be 50 characters or fewer." },
+          { error: "O nome da categoria é obrigatório e deve ter 50 caracteres ou menos." },
           { status: 400 }
         );
       }
       if (name.trim().length > 50) {
         return NextResponse.json(
-          { error: "Category name is required and must be 50 characters or fewer." },
+          { error: "O nome da categoria é obrigatório e deve ter 50 caracteres ou menos." },
           { status: 400 }
         );
       }
@@ -66,20 +66,20 @@ export async function PUT(request: Request, context: RouteContext) {
       });
       if (conflict) {
         return NextResponse.json(
-          { error: "A category with this name already exists." },
+          { error: "Uma categoria com este nome já existe." },
           { status: 409 }
         );
       }
     }
     if (colorCode !== undefined && !isValidHex(colorCode)) {
       return NextResponse.json(
-        { error: "A valid hex color code is required (e.g. #3b82f6)." },
+        { error: "Um código de cor hexadecimal válido é obrigatório (ex: #3b82f6)." },
         { status: 400 }
       );
     }
     if (iconRef !== undefined && !VALID_ICONS.has(iconRef)) {
       return NextResponse.json(
-        { error: "A valid icon reference is required." },
+        { error: "Uma referência de ícone válida é obrigatória." },
         { status: 400 }
       );
     }
@@ -107,7 +107,7 @@ export async function PUT(request: Request, context: RouteContext) {
     return NextResponse.json(updated);
   } catch (error) {
     console.error("[PUT /api/categories/[id]]", error);
-    return NextResponse.json({ error: "Failed to update category" }, { status: 500 });
+    return NextResponse.json({ error: "Falha ao atualizar categoria" }, { status: 500 });
   }
 }
 
@@ -116,7 +116,7 @@ export async function DELETE(request: Request, context: RouteContext) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { id } = await context.params;
@@ -126,13 +126,13 @@ export async function DELETE(request: Request, context: RouteContext) {
       where: { id, userId },
     });
     if (!category) {
-      return NextResponse.json({ error: "Category not found or unauthorized." }, { status: 404 });
+      return NextResponse.json({ error: "Categoria não encontrada ou não autorizada." }, { status: 404 });
     }
 
     // ── Block system-default deletion ───────────────────────────────────────
     if (category.isSystemDefault) {
       return NextResponse.json(
-        { error: "System default categories cannot be deleted." },
+        { error: "Categorias padrão do sistema não podem ser excluídas." },
         { status: 403 }
       );
     }
@@ -143,7 +143,7 @@ export async function DELETE(request: Request, context: RouteContext) {
     });
     if (!fallback) {
       return NextResponse.json(
-        { error: "The \"Sem Categoria\" system category is missing. Please re-run the seed." },
+        { error: "A categoria padrão 'Sem Categoria' está ausente. Por favor, execute o seed novamente." },
         { status: 500 }
       );
     }
@@ -160,6 +160,6 @@ export async function DELETE(request: Request, context: RouteContext) {
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("[DELETE /api/categories/[id]]", error);
-    return NextResponse.json({ error: "Failed to delete category" }, { status: 500 });
+    return NextResponse.json({ error: "Falha ao excluir categoria" }, { status: 500 });
   }
 }

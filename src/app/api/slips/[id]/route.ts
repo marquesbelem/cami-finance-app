@@ -11,7 +11,7 @@ export async function PUT(
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -21,7 +21,7 @@ export async function PUT(
       where: { id, userId },
     });
     if (!existing) {
-      return NextResponse.json({ error: "Slip not found" }, { status: 404 });
+      return NextResponse.json({ error: "Boleto não encontrado" }, { status: 404 });
     }
 
     const title = (formData.get("title") as string) || existing.title;
@@ -80,7 +80,7 @@ export async function PUT(
   } catch (error) {
     console.error("[PUT /api/slips/:id]", error);
     return NextResponse.json(
-      { error: "Failed to update slip" },
+      { error: "Falha ao atualizar o boleto" },
       { status: 500 }
     );
   }
@@ -94,7 +94,7 @@ export async function DELETE(
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -103,7 +103,7 @@ export async function DELETE(
       where: { id, userId },
     });
     if (!existing) {
-      return NextResponse.json({ error: "Slip not found" }, { status: 404 });
+      return NextResponse.json({ error: "Boleto não encontrado" }, { status: 404 });
     }
 
     await prisma.paymentSlip.delete({ where: { id } });
@@ -115,7 +115,7 @@ export async function DELETE(
   } catch (error) {
     console.error("[DELETE /api/slips/:id]", error);
     return NextResponse.json(
-      { error: "Failed to delete slip" },
+      { error: "Falha ao excluir o boleto" },
       { status: 500 }
     );
   }

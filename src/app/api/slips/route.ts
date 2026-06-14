@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[GET /api/slips]", error);
     return NextResponse.json(
-      { error: "Failed to fetch slips" },
+      { error: "Falha ao carregar boletos" },
       { status: 500 }
     );
   }
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const formData = await request.formData();
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     // Validation
     if (!title || isNaN(amount) || amount <= 0 || !categoryId || !status) {
       return NextResponse.json(
-        { error: "Missing or invalid required fields" },
+        { error: "Campos obrigatórios ausentes ou inválidos" },
         { status: 400 }
       );
     }
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[POST /api/slips]", error);
     return NextResponse.json(
-      { error: "Failed to create slip" },
+      { error: "Falha ao criar boleto" },
       { status: 500 }
     );
   }

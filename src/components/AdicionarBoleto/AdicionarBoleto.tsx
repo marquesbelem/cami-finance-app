@@ -30,12 +30,20 @@ interface Props {
   editingSlip?: Slip | null;
 }
 
+function getTodayDateString(): string {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [status, setStatus] = useState("Pending");
+  const [dueDate, setDueDate] = useState(getTodayDateString());
+  const [status, setStatus] = useState("PENDENTE");
   const [categoryId, setCategoryId] = useState("");
   const [isCreditCardPayment, setIsCreditCardPayment] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -77,7 +85,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
   function resetForm() {
     setTitle("");
     setAmount("");
-    setDueDate("");
+    setDueDate(getTodayDateString());
     setStatus("PENDENTE");
     setCategoryId(categories[0]?.id ?? "");
     setIsCreditCardPayment(false);
@@ -92,7 +100,25 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
     const parsedAmount = parseFloat(amount.replace(",", "."));
     if (!title.trim()) { setError("Título é obrigatório."); return; }
     if (isNaN(parsedAmount) || parsedAmount <= 0) { setError("Valor deve ser positivo."); return; }
-    if (!dueDate) { setError("Data de vencimento é obrigatória."); return; }
+    
+    if (!dueDate) {
+      setError("Data de vencimento é obrigatória.");
+      return;
+    }
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(dueDate)) {
+      setError("Formato de data inválido. Por favor, selecione uma data válida.");
+      return;
+    }
+    const dateParts = dueDate.split("-");
+    const year = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10);
+    const day = parseInt(dateParts[2], 10);
+    if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1900 || year > 2100) {
+      setError("Data de vencimento inválida. Por favor, insira uma data correta.");
+      return;
+    }
+
     if (!categoryId) { setError("Selecione uma categoria."); return; }
 
     const formData = new FormData();
@@ -153,7 +179,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
           {/* Title */}
           <div className={styles.field}>
             <label htmlFor="slip-title" className={styles.label}>
-              <Tag size={14} /> Título
+              <Tag size={14} /> Título <span className={styles.requiredAsterisk}>*</span>
             </label>
             <input
               id="slip-title"
@@ -171,7 +197,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
           <div className={styles.fieldRow}>
             <div className={styles.field}>
               <label htmlFor="slip-amount" className={styles.label}>
-                <DollarSign size={14} /> Valor (R$)
+                <DollarSign size={14} /> Valor (R$) <span className={styles.requiredAsterisk}>*</span>
               </label>
               <input
                 id="slip-amount"
@@ -189,7 +215,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
             {/* Due Date */}
             <div className={styles.field}>
               <label htmlFor="slip-due-date" className={styles.label}>
-                <Calendar size={14} /> Vencimento
+                <Calendar size={14} /> Vencimento <span className={styles.requiredAsterisk}>*</span>
               </label>
               <input
                 id="slip-due-date"
@@ -206,7 +232,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
           <div className={styles.fieldRow}>
             <div className={styles.field}>
               <label htmlFor="slip-category" className={styles.label}>
-                <Tag size={14} /> Categoria
+                <Tag size={14} /> Categoria <span className={styles.requiredAsterisk}>*</span>
               </label>
               <select
                 id="slip-category"

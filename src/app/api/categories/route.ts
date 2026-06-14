@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const categories: CategoryWithCount[] = await prisma.category.findMany({
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(categories);
   } catch (error) {
     console.error("[GET /api/categories]", error);
-    return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
+    return NextResponse.json({ error: "Falha ao carregar categorias" }, { status: 500 });
   }
 }
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -65,25 +65,25 @@ export async function POST(request: NextRequest) {
     // ── Validation ──────────────────────────────────────────────────────────
     if (!name || !name.trim()) {
       return NextResponse.json(
-        { error: "Category name is required and must be 50 characters or fewer." },
+        { error: "O nome da categoria é obrigatório e deve ter 50 caracteres ou menos." },
         { status: 400 }
       );
     }
     if (name.trim().length > 50) {
       return NextResponse.json(
-        { error: "Category name is required and must be 50 characters or fewer." },
+        { error: "O nome da categoria é obrigatório e deve ter 50 caracteres ou menos." },
         { status: 400 }
       );
     }
     if (!colorCode || !isValidHex(colorCode)) {
       return NextResponse.json(
-        { error: "A valid hex color code is required (e.g. #3b82f6)." },
+        { error: "Um código de cor hexadecimal válido é obrigatório (ex: #3b82f6)." },
         { status: 400 }
       );
     }
     if (!iconRef || !VALID_ICONS.has(iconRef)) {
       return NextResponse.json(
-        { error: "A valid icon reference is required." },
+        { error: "Uma referência de ícone válida é obrigatória." },
         { status: 400 }
       );
     }
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     });
     if (existing) {
       return NextResponse.json(
-        { error: "A category with this name already exists." },
+        { error: "Uma categoria com este nome já existe." },
         { status: 409 }
       );
     }
@@ -122,6 +122,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(created, { status: 201 });
   } catch (error) {
     console.error("[POST /api/categories]", error);
-    return NextResponse.json({ error: "Failed to create category" }, { status: 500 });
+    return NextResponse.json({ error: "Falha ao criar categoria" }, { status: 500 });
   }
 }

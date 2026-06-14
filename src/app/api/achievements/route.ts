@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const achievements = await prisma.achievement.findMany({
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[GET /api/achievements]", error);
     return NextResponse.json(
-      { error: "Failed to fetch achievements" },
+      { error: "Falha ao carregar conquistas" },
       { status: 500 }
     );
   }
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   try {
     const userId = request.headers.get("x-user-id");
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -36,14 +36,14 @@ export async function POST(request: NextRequest) {
 
     if (!title || !description || !type || conditionValue === undefined) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Campos obrigatórios ausentes" },
         { status: 400 }
       );
     }
 
     if (!["STREAK", "CARD_THRESHOLD", "SAVINGS"].includes(type)) {
       return NextResponse.json(
-        { error: 'type must be "STREAK", "CARD_THRESHOLD", or "SAVINGS"' },
+        { error: 'o tipo deve ser "STREAK", "CARD_THRESHOLD" ou "SAVINGS"' },
         { status: 400 }
       );
     }
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[POST /api/achievements]", error);
     return NextResponse.json(
-      { error: "Failed to create achievement" },
+      { error: "Falha ao criar conquista" },
       { status: 500 }
     );
   }
