@@ -136,10 +136,11 @@
   100% { background-position: 200% 0; }
 }
 
-/* ── Responsive ───────────────────────────────────────────────────────────── */
+/* ── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .page {
-    padding: var(--space-6) var(--space-4) var(--space-12);
+    padding: var(--space-5) var(--space-4) calc(var(--space-10) + env(safe-area-inset-bottom, 0px));
+    gap: var(--space-6);
   }
 
   .pageTitle {
@@ -153,5 +154,24 @@
 
   .addBtn {
     justify-content: center;
+  }
+
+  .skeletonGrid {
+    /* Smaller minimum card size on narrow phones */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 374px) {
+  .page {
+    padding: var(--space-4) var(--space-3) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .pageTitle {
+    font-size: var(--text-2xl);
+  }
+
+  .skeletonGrid {
+    grid-template-columns: 1fr;
   }
 }

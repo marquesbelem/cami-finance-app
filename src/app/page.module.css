@@ -244,24 +244,49 @@
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--color-border);
-    padding: var(--space-5);
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: var(--space-5) var(--space-4);
+    gap: var(--space-5);
+  }
+
+  .appTitle {
+    font-size: var(--text-xl);
   }
 }
 
 @media (max-width: 640px) {
   .main {
-    padding: var(--space-4);
-    gap: var(--space-5);
+    padding: var(--space-4) var(--space-3);
+    gap: var(--space-4);
+    /* Respect safe areas on iOS notch/home indicator */
+    padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
   }
 
   .header {
     flex-direction: column;
     align-items: stretch;
-    gap: var(--space-4);
+    gap: var(--space-3);
   }
 
   .headerLeft {
     width: 100%;
+  }
+
+  .headerIcon {
+    display: none; /* Save space on mobile — title is self-explanatory */
+  }
+
+  .appTitle {
+    font-size: var(--text-lg);
+  }
+
+  .appSubtitle {
+    display: none; /* Hide subtitle on very small screens */
   }
 
   .monthNav {
@@ -274,15 +299,37 @@
     flex: 1;
     min-width: 0;
     font-size: var(--text-sm);
+    /* Prevent overflow on very narrow viewports */
+    white-space: normal;
+    text-align: center;
   }
 
   .addBtn {
     width: 100%;
     justify-content: center;
-    padding: var(--space-3) var(--space-5);
+    padding: var(--space-3) var(--space-4);
   }
 
   .addBtn span {
     display: inline;
+  }
+
+  .emptyState {
+    padding: var(--space-10) var(--space-4);
+  }
+
+  .emptyTitle {
+    font-size: var(--text-lg);
+  }
+}
+
+/* ── Very small screens (320px – 374px) ─────────────────────────────────────── */
+@media (max-width: 374px) {
+  .main {
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .sidebar {
+    padding: var(--space-4) var(--space-3);
   }
 }

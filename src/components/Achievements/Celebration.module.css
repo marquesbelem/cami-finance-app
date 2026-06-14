@@ -8,6 +8,7 @@
   gap: var(--space-3);
   z-index: var(--z-toast);
   pointer-events: none;
+  max-width: calc(100vw - var(--space-12));
 }
 
 /* ── Toast ──────────────────────────────────────────────────────────────────── */
@@ -21,7 +22,7 @@
   border-radius: var(--radius-xl);
   padding: var(--space-4) var(--space-5);
   min-width: 280px;
-  max-width: 380px;
+  max-width: min(380px, calc(100vw - var(--space-12)));
   box-shadow: var(--shadow-xl);
   overflow: hidden;
   pointer-events: auto;
@@ -373,5 +374,51 @@
     top: 105%;
     transform: translateX(100px) rotate(360deg);
     opacity: 0;
+  }
+}
+
+/* ── Mobile Overrides ──────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .host {
+    /* On mobile: stretch across the bottom, centred */
+    right: var(--space-3);
+    left: var(--space-3);
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    align-items: stretch;
+  }
+
+  .toast {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .salaryModal {
+    padding: var(--space-5) var(--space-4);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 0;
+  }
+
+  .salaryOverlay {
+    align-items: flex-end;
+  }
+
+  .salaryIconWrap {
+    width: 70px;
+    height: 70px;
+    margin-bottom: var(--space-4);
+  }
+
+  .salaryTitle {
+    font-size: var(--text-xl);
+  }
+
+  .iconWrap {
+    width: 34px;
+    height: 34px;
   }
 }

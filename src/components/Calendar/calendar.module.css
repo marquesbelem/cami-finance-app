@@ -628,22 +628,41 @@
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .calendarPage {
-    padding: var(--space-5);
+    padding: var(--space-5) var(--space-4);
     gap: var(--space-5);
   }
 }
 
 @media (max-width: 640px) {
+  .calendarPage {
+    padding: var(--space-4) var(--space-3);
+    padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+    gap: var(--space-4);
+  }
+
   .calendarTitle {
     font-size: var(--text-xl);
   }
 
+  .calendarHeaderIcon {
+    display: none;
+  }
+
   .calendarHeader {
     gap: var(--space-3);
+    margin-bottom: var(--space-4);
   }
 
   .monthLabel {
-    min-width: 140px;
+    min-width: 0;
+    flex: 1;
+    font-size: var(--text-xs);
+    white-space: normal;
+    text-align: center;
+  }
+
+  .todayBtn {
+    padding: var(--space-1) var(--space-3);
     font-size: var(--text-xs);
   }
 

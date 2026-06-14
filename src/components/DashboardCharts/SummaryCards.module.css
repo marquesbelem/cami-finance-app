@@ -113,13 +113,47 @@
   }
 }
 
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .card {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+}
+
 @media (max-width: 560px) {
+  .grid {
+    /* 2-column on phones — shows more context than a single column */
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .value {
+    font-size: var(--text-lg);
+  }
+
+  .iconWrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .card {
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+}
+
+@media (max-width: 374px) {
   .grid {
     grid-template-columns: 1fr;
   }
 
   .value {
-    font-size: var(--text-xl);
+    font-size: var(--text-base);
   }
 }
 

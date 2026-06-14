@@ -1,0 +1,71 @@
+/* ── Global Navigation Bar ─────────────────────────────────────────────────── */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  /* Respect left safe area on landscape phones */
+  padding-left: calc(var(--space-6) + env(safe-area-inset-left, 0px));
+  padding-right: calc(var(--space-6) + env(safe-area-inset-right, 0px));
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  transition: color var(--transition-fast), background var(--transition-fast);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.navLink:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-overlay);
+}
+
+.navLinkLabel {
+  /* Can be hidden on small screens */
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .nav {
+    padding: var(--space-2) var(--space-3);
+    gap: 0;
+    /* Justify links evenly on small screens */
+    justify-content: space-around;
+  }
+
+  .navLink {
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    font-size: 10px;
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-lg);
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 374px) {
+  .navLink {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .navLinkLabel {
+    /* Hide text labels, show icons only on tiny screens */
+    display: none;
+  }
+}

@@ -433,3 +433,81 @@
   font-style: italic;
   margin-top: 2px;
 }
+
+/* ── Mobile Overrides ────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  /* Panel is now full-width above main content — reduce vertical density */
+  .panel {
+    gap: var(--space-3);
+  }
+
+  /* Trail cards sit side-by-side in a horizontal scroll on tablet */
+  .trailContainer {
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--space-2); /* room for scrollbar */
+  }
+
+  .achCard {
+    min-width: 200px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  /* formGrid: 2-column stays fine on tablet since sidebar is now full-width */
+}
+
+@media (max-width: 640px) {
+  .rpgProfile {
+    padding: var(--space-3);
+  }
+
+  .profileAvatar {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+
+  .profileClass {
+    font-size: var(--text-sm);
+  }
+
+  .profileLevelRow {
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  /* Single-column settings form on narrow phones */
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Achievement trail cards become normal vertical list again at narrow phones */
+  .trailContainer {
+    flex-direction: column;
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+
+  .achCard {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  .panelTitle {
+    font-size: var(--text-base);
+  }
+}
+
+@media (max-width: 374px) {
+  .achCard {
+    padding: var(--space-3);
+  }
+
+  .achIcon {
+    width: 30px;
+    height: 30px;
+  }
+}
