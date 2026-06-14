@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Plus, LayoutDashboard, ChevronLeft, ChevronRight } from "lucide-react";
 import AdicionarBoleto from "@/components/AdicionarBoleto/AdicionarBoleto";
 import SlipItem, { Slip } from "@/components/SlipList/SlipItem";
@@ -38,6 +38,7 @@ export default function Home() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSlip, setEditingSlip] = useState<Slip | null>(null);
   const [loading, setLoading] = useState(true);
+  const [toggling, setToggling] = useState<Record<string, boolean>>({});
   const [salaryToCelebrate, setSalaryToCelebrate] = useState<{ amount: number; month: string } | null>(null);
 
   const { toasts, dismissToast, celebrateAchievement, addToast, showXpToast, showLevelUpToast } = useToasts();
@@ -114,7 +115,11 @@ export default function Home() {
 
   async function handleDelete(id: string) {
     const deleted = slips.find((s) => s.id === id);
-    await fetch(`/api/slips/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/slips/${id}`, { method: "DELETE" });
+    if (!res.ok && res.status !== 204) {
+      addToast({ title: "Erro", message: "Não foi possível excluir o boleto.", type: "danger" });
+      return;
+    }
     setSlips((prev) => prev.filter((s) => s.id !== id));
     if (deleted) {
       addToast({ title: "Boleto excluído", message: deleted.title, type: "info" });
@@ -122,22 +127,52 @@ export default function Home() {
   }
 
   async function handleStatusToggle(slip: Slip) {
-    const newStatus = slip.status === "PAGO" ? "PENDENTE" : "PAGO";
-    const form = new FormData();
-    form.append("status", newStatus);
-    const res = await fetch(`/api/slips/${slip.id}`, { method: "PUT", body: form });
-    const updated: Slip = await res.json();
-    setSlips((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+    if (toggling[slip.id]) return; // debounce
 
-    // Check XP metadata for debit/PIX payment
-    const xpDetails = (updated as any).xpDetails;
-    if (xpDetails) {
-      showXpToast(xpDetails.xpGained, "Boleto pago no Débito ou PIX!");
-      if (xpDetails.leveledUp) {
-        setTimeout(() => {
-          showLevelUpToast(xpDetails.newLevel);
-        }, 1200);
+    const newStatus = slip.status === "PAGO" ? "PENDENTE" : "PAGO";
+    const previous = slips;
+
+    // 1. Optimistic update
+    setToggling((t) => ({ ...t, [slip.id]: true }));
+    setSlips((prev) =>
+      prev.map((s) => (s.id === slip.id ? { ...s, status: newStatus } : s))
+    );
+
+    try {
+      // 2. Server confirm
+      const form = new FormData();
+      form.append("status", newStatus);
+      const res = await fetch(`/api/slips/${slip.id}`, { method: "PUT", body: form });
+      if (!res.ok) throw new Error("toggle failed");
+      const updated: Slip = await res.json();
+
+      // 3. Replace optimistic slip with server response
+      setSlips((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+
+      // Check XP metadata for debit/PIX payment
+      const xpDetails = (updated as any).xpDetails;
+      if (xpDetails) {
+        showXpToast(xpDetails.xpGained, "Boleto pago no Débito ou PIX!");
+        if (xpDetails.leveledUp) {
+          setTimeout(() => {
+            showLevelUpToast(xpDetails.newLevel);
+          }, 1200);
+        }
       }
+    } catch {
+      // 4. Rollback on error
+      setSlips(previous);
+      addToast({
+        title: "Erro",
+        message: "Não foi possível atualizar o status.",
+        type: "danger",
+      });
+    } finally {
+      setToggling((t) => {
+        const copy = { ...t };
+        delete copy[slip.id];
+        return copy;
+      });
     }
   }
 
@@ -151,14 +186,17 @@ export default function Home() {
     setEditingSlip(null);
   }
 
-  // Group overdue slips first
-  const sorted = [...slips].sort((a, b) => {
-    const aOverdue = a.status !== "PAGO" && new Date(a.dueDate) < new Date();
-    const bOverdue = b.status !== "PAGO" && new Date(b.dueDate) < new Date();
-    if (aOverdue && !bOverdue) return -1;
-    if (!aOverdue && bOverdue) return 1;
-    return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-  });
+  // Group overdue slips first — memoised so it only re-runs when slips change
+  const sorted = useMemo(() => {
+    const now = new Date();
+    return [...slips].sort((a, b) => {
+      const aOverdue = a.status !== "PAGO" && new Date(a.dueDate) < now;
+      const bOverdue = b.status !== "PAGO" && new Date(b.dueDate) < now;
+      if (aOverdue && !bOverdue) return -1;
+      if (!aOverdue && bOverdue) return 1;
+      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    });
+  }, [slips]);
 
   return (
     <>

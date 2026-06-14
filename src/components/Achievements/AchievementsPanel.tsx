@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Trophy, Star, Zap, TrendingDown, Settings, Lock } from "lucide-react";
 import styles from "./AchievementsPanel.module.css";
 
@@ -73,13 +73,17 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
   const [salaryAmount, setSalaryAmount] = useState("");
   const [paymentDay, setPaymentDay] = useState("");
 
-  async function loadData() {
+  // Stable ref so interval callback always reads the latest achievements list
+  const achievementsRef = useRef<Achievement[]>([]);
+  achievementsRef.current = achievements;
+
+  const loadData = useCallback(async () => {
     const [achRes, statsRes] = await Promise.all([
       fetch("/api/achievements"),
       fetch("/api/stats"),
     ]);
     const [achData, statsData] = await Promise.all([achRes.json(), statsRes.json()]);
-    const prev = achievements;
+    const prev = achievementsRef.current;
     setAchievements(achData);
     setStats(statsData);
 
@@ -100,15 +104,14 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
         }
       }
     }
-  }
+  }, [onAchievementUnlocked]);
 
   useEffect(() => {
     setLoading(true);
     loadData().finally(() => setLoading(false));
     const timer = setInterval(loadData, 20000);
     return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadData]);
 
   async function handleSaveSettings(e: React.FormEvent) {
     e.preventDefault();
@@ -123,7 +126,9 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
       }),
     });
     setShowSettings(false);
-    await loadData();
+    // Reload panel data to refresh local state
+    loadData();
+    // Notify parent to silently refresh dashboard budget values
     if (onSettingsSaved) {
       onSettingsSaved();
     }
