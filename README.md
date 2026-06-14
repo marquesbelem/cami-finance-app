@@ -1,14 +1,20 @@
 # 💰 Cami Finance — Gerenciador Financeiro Gamificado
 
-Um painel financeiro pessoal moderno e interativo com conquistas gamificadas para você controlar seus gastos no cartão de crédito.
+Um painel financeiro pessoal moderno e interativo com conquistas gamificadas e elementos de RPG para incentivar o controle de gastos e evitar o uso do cartão de crédito.
 
 ## ✨ Funcionalidades
 
-- **📄 Gestão de Boletos (CRUD)** — Adicione, edite, exclua e marque boletos como pagos com upload de documentos (PDF/imagem)
-- **📊 Dashboard Mensal** — Navegue entre meses e visualize gráficos interativos (rosca por categoria, barras pago vs. pendente)
-- **🏆 Conquistas Gamificadas** — Desbloqueie e crie metas personalizadas para controlar uso do cartão de crédito
-- **🎉 Notificações** — Celebrações animadas ao desbloquear conquistas
-- **🌑 Dark Mode** — Tema escuro por padrão com paleta Harmony
+- **📄 Gestão de Boletos (CRUD)** — Adicione, edite, exclua e alterne o pagamento de boletos com upload de comprovantes (PDF/imagem).
+- **📊 Dashboard Mensal** — Navegue entre meses e visualize gráficos interativos de rosca por categoria e de barras de gastos.
+- **🛡️ HUD de RPG e Barra de HP (Orçamento)** — Seu limite mensal é o seu HP (Pontos de Vida). A barra drena dinamicamente e muda de cor: verde (saudável), amarelo (alerta) e vermelho piscante (crítico <20% com animação de batimentos no coração).
+- **⭐ Nível e Progressão de XP** — Ganhe XP ao adicionar boletos (+10 XP), manter a consistência diária (+20 XP de bônus por streak) e realizar pagamentos via PIX ou Débito (+25 XP). Suba de nível e mude de classe (ex: *Guerreiro do Débito*, *Paladino das Finanças*).
+- **🏆 Três Árvores de Conquistas Encadeadas** — Três trilhas com progressão bloqueada por nível (você precisa desbloquear o Nível 1 antes de progredir para o Nível 2):
+  1. **Trilha Redução de Cartão** (metas de gastos abaixo de 40%, 20% e 0% do limite).
+  2. **Trilha Consistência** (ficar 3, 7 e 30 dias seguidos sem usar o cartão).
+  3. **Trilha Margem de Lucro** (guardar 10%, 50% e 70% da receita do mês).
+- **🎉 Comemoração de Salário e Toasts** — Modal comemorativo com chuva de confetes no dia do recebimento do salário e toasts animados para ganhos de XP e Level Up.
+- **⚙️ Configurações de RPG** — Painel lateral integrado para configurar a porcentagem do orçamento HP (0-100% sobre o salário), limite de crédito, valor do salário agendado e dia do pagamento.
+- **🌑 Dark Mode** — Tema escuro imersivo por padrão com paletas harmoniosas e transições suaves.
 
 ## 🛠️ Tech Stack
 
@@ -120,16 +126,33 @@ src/
     └── achievements.ts      # Motor de cálculo de conquistas
 ```
 
-## 🏆 Sistema de Conquistas
+## 🎮 Mecânicas de Gamificação e RPG
 
-| Tipo | Comportamento |
-|------|--------------|
-| `CARD_THRESHOLD` | Meta: manter gastos no cartão abaixo de X% do total |
-| `SAVINGS` | Meta: gastar menos de X% do limite de orçamento mensal |
-| `STREAK` | Meta: dias sem usar o cartão de crédito |
+### 1. Sistema de Níveis e XP (Experiência)
+A progressão do usuário é baseada em acúmulo de XP, onde a meta para o próximo nível escala dinamicamente como `Nível Atual * 100` XP.
+As fontes de ganho de XP são:
+* **📝 Registro Diário (+10 XP)**: Concedido ao criar ou atualizar um boleto.
+* **🔥 Bônus de Consistência (+20 XP)**: Concedido como bônus ao registrar boletos em dias seguidos (sequência de registro).
+* **🛡️ Pagamento Saudável (+25 XP)**: Concedido ao marcar um boleto como pago no **Débito** ou **PIX** (onde `isCreditCardPayment === false`).
 
-Conquistas são recalculadas automaticamente após cada mutação de boleto.
+### 2. Árvores de Conquistas Encadeadas
+As 9 conquistas padrão do sistema são divididas em 3 trilhas principais de 3 níveis cada. O progresso e desbloqueio do **Nível N+1** de uma trilha está **bloqueado em cadeia** até que o **Nível N** correspondente seja desbloqueado:
+
+| Trilha | Nível | Conquista | Condição de Desbloqueio |
+|--------|-------|-----------|-------------------------|
+| **💳 Redução de Cartão** | Nv.1 | Cartão sob Controle | Gastos no cartão de crédito abaixo de 40% do limite total. |
+| | Nv.2 | Uso Consciente | Gastos no cartão de crédito abaixo de 20% do limite total. |
+| | Nv.3 | Cartão Zero | Nenhum gasto no cartão de crédito (0% do limite). |
+| **🔥 Consistência** | Nv.1 | Foco Inicial | Ficar 3 dias seguidos sem registrar gastos no cartão. |
+| | Nv.2 | Hábito Saudável | Ficar 7 dias seguidos sem registrar gastos no cartão. |
+| | Nv.3 | Mestre do Débito | Ficar 30 dias seguidos sem registrar gastos no cartão. |
+| **📈 Margem de Lucro** | Nv.1 | Pé de Meia | Economizar/guardar pelo menos 10% da receita mensal. |
+| | Nv.2 | Investidor Iniciante | Economizar/guardar pelo menos 50% da receita mensal. |
+| | Nv.3 | Independência Financeira | Economizar/guardar pelo menos 70% da receita mensal. |
+
+*O motor de regras avalia o progresso e desbloqueio a cada alteração, deleção ou marcação de boletos.*
 
 ## 📋 Cenários de Verificação
 
-Veja o guia completo em [`specs/001-finance-manager/quickstart.md`](./specs/001-finance-manager/quickstart.md).
+Veja o guia completo de especificações e execução em [`specs/004-persistent-db-migration/plan.md`](./specs/004-persistent-db-migration/plan.md).
+
