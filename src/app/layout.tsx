@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit, Inter } from "next/font/google";
 import Link from "next/link";
-import { LayoutDashboard, Tag } from "lucide-react";
+import { LayoutDashboard, Tag, CalendarDays } from "lucide-react";
+import AuthProvider from "@/components/AuthProvider/AuthProvider";
 import "./globals.css";
 
 // ── Self-hosted Google Fonts via next/font ─────────────────────────────────
@@ -47,67 +48,88 @@ export default function RootLayout({
         <meta name="theme-color" content="#0d0f1a" />
       </head>
       <body>
-        {/* ── Global Navigation ──────────────────────────────────────────── */}
-        <nav
-          id="global-nav"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "var(--space-2)",
-            padding: "var(--space-3) var(--space-6)",
-            background: "var(--color-bg-surface)",
-            borderBottom: "1px solid var(--color-border)",
-            position: "sticky",
-            top: 0,
-            zIndex: "var(--z-header)",
-          }}
-          aria-label="Navegação principal"
-        >
-          <Link
-            href="/"
-            id="nav-home"
+        <AuthProvider>
+          {/* ── Global Navigation ──────────────────────────────────────────── */}
+          <nav
+            id="global-nav"
             style={{
               display: "flex",
               alignItems: "center",
               gap: "var(--space-2)",
-              padding: "var(--space-2) var(--space-3)",
-              borderRadius: "var(--radius-md)",
-              color: "var(--color-text-secondary)",
-              fontSize: "var(--text-sm)",
-              fontWeight: "var(--font-medium)",
-              transition: "color var(--transition-fast), background var(--transition-fast)",
+              padding: "var(--space-3) var(--space-6)",
+              background: "var(--color-bg-surface)",
+              borderBottom: "1px solid var(--color-border)",
+              position: "sticky",
+              top: 0,
+              zIndex: "var(--z-header)",
             }}
-            aria-label="Painel principal"
+            aria-label="Navegação principal"
           >
-            <LayoutDashboard size={16} />
-            Dashboard
-          </Link>
-          <Link
-            href="/categories"
-            id="nav-categories"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-2)",
-              padding: "var(--space-2) var(--space-3)",
-              borderRadius: "var(--radius-md)",
-              color: "var(--color-text-secondary)",
-              fontSize: "var(--text-sm)",
-              fontWeight: "var(--font-medium)",
-              transition: "color var(--transition-fast), background var(--transition-fast)",
-            }}
-            aria-label="Gerenciar categorias"
-          >
-            <Tag size={16} />
-            Categorias
-          </Link>
-        </nav>
+            <Link
+              href="/"
+              id="nav-home"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-2)",
+                padding: "var(--space-2) var(--space-3)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-text-secondary)",
+                fontSize: "var(--text-sm)",
+                fontWeight: "var(--font-medium)",
+                transition: "color var(--transition-fast), background var(--transition-fast)",
+              }}
+              aria-label="Painel principal"
+            >
+              <LayoutDashboard size={16} />
+              Dashboard
+            </Link>
+            <Link
+              href="/calendar"
+              id="nav-calendar"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-2)",
+                padding: "var(--space-2) var(--space-3)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-text-secondary)",
+                fontSize: "var(--text-sm)",
+                fontWeight: "var(--font-medium)",
+                transition: "color var(--transition-fast), background var(--transition-fast)",
+              }}
+              aria-label="Calendário de vencimentos"
+            >
+              <CalendarDays size={16} />
+              Calendário
+            </Link>
+            <Link
+              href="/categories"
+              id="nav-categories"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-2)",
+                padding: "var(--space-2) var(--space-3)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-text-secondary)",
+                fontSize: "var(--text-sm)",
+                fontWeight: "var(--font-medium)",
+                transition: "color var(--transition-fast), background var(--transition-fast)",
+              }}
+              aria-label="Gerenciar categorias"
+            >
+              <Tag size={16} />
+              Categorias
+            </Link>
+          </nav>
 
-        <div id="app-root">
-          {children}
-        </div>
-        {/* Portal anchor for modals and toasts */}
-        <div id="portal-root" />
+          <div id="app-root">
+            {children}
+          </div>
+          {/* Portal anchor for modals and toasts */}
+          <div id="portal-root" />
+        </AuthProvider>
       </body>
     </html>
   );

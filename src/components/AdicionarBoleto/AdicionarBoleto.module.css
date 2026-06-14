@@ -268,7 +268,7 @@
 }
 
 /* ── Responsive ─────────────────────────────────────────────────────────────── */
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .fieldRow {
     grid-template-columns: 1fr;
   }
@@ -281,5 +281,33 @@
   .saveBtn {
     width: 100%;
     text-align: center;
+  }
+
+  /* Bottom-sheet layout: no dead vertical gaps */
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    /* Fill the viewport so no dark backdrop is exposed above the sheet */
+    height: 96dvh;
+    max-height: 96dvh;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    border-bottom: none;
+    animation: slideInUp var(--transition-slow) cubic-bezier(0.34, 1.2, 0.64, 1) both;
+  }
+
+  /* Form must flex-grow to fill the remaining modal height and scroll internally */
+  .form {
+    flex: 1;
+    padding: var(--space-4);
+    gap: var(--space-4);
+    overflow-y: auto;
+    min-height: 0; /* allow flex child to shrink below content size */
   }
 }

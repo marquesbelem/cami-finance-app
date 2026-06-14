@@ -38,8 +38,9 @@ export default function Home() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSlip, setEditingSlip] = useState<Slip | null>(null);
   const [loading, setLoading] = useState(true);
+  const [salaryToCelebrate, setSalaryToCelebrate] = useState<{ amount: number; month: string } | null>(null);
 
-  const { toasts, dismissToast, celebrateAchievement, addToast } = useToasts();
+  const { toasts, dismissToast, celebrateAchievement, addToast, showXpToast, showLevelUpToast } = useToasts();
 
   // ── Data loading ──────────────────────────────────────────────────────────
   const loadSlips = useCallback(async () => {
@@ -54,7 +55,18 @@ export default function Home() {
         statsRes.json(),
       ]);
       setSlips(slipsData);
-      setBudgetLimit(statsData.monthlyBudgetLimit ?? 2000);
+      const salary = statsData.scheduledSalaryAmount > 0 ? statsData.scheduledSalaryAmount : 3000.0;
+      const budgetPct = statsData.monthlyBudgetLimit ?? 50.0;
+      const calculatedBudget = salary * (budgetPct / 100);
+      setBudgetLimit(calculatedBudget);
+
+      // Trigger retroactive salary received celebration if validated
+      if (statsData.celebrateSalary) {
+        setSalaryToCelebrate({
+          amount: statsData.scheduledSalaryAmount,
+          month: formatMonthLabel(selectedMonth),
+        });
+      }
     } catch {
       addToast({ title: "Erro", message: "Falha ao carregar boletos.", type: "danger" });
     } finally {
@@ -82,6 +94,22 @@ export default function Home() {
       message: saved.title,
       type: "success",
     });
+
+    // Award XP and show toasts if metadata exists
+    const xpDetails = (saved as any).xpDetails;
+    if (xpDetails) {
+      showXpToast(
+        xpDetails.xpGained,
+        xpDetails.bonusAwarded
+          ? `Bônus de consistência diária! Combo: ${xpDetails.streak} dias 🔥`
+          : "Despesa registrada!"
+      );
+      if (xpDetails.leveledUp) {
+        setTimeout(() => {
+          showLevelUpToast(xpDetails.newLevel);
+        }, 1200);
+      }
+    }
   }
 
   async function handleDelete(id: string) {
@@ -94,12 +122,23 @@ export default function Home() {
   }
 
   async function handleStatusToggle(slip: Slip) {
-    const newStatus = slip.status === "Paid" ? "Pending" : "Paid";
+    const newStatus = slip.status === "PAGO" ? "PENDENTE" : "PAGO";
     const form = new FormData();
     form.append("status", newStatus);
     const res = await fetch(`/api/slips/${slip.id}`, { method: "PUT", body: form });
     const updated: Slip = await res.json();
     setSlips((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+
+    // Check XP metadata for debit/PIX payment
+    const xpDetails = (updated as any).xpDetails;
+    if (xpDetails) {
+      showXpToast(xpDetails.xpGained, "Boleto pago no Débito ou PIX!");
+      if (xpDetails.leveledUp) {
+        setTimeout(() => {
+          showLevelUpToast(xpDetails.newLevel);
+        }, 1200);
+      }
+    }
   }
 
   function openEdit(slip: Slip) {
@@ -114,8 +153,8 @@ export default function Home() {
 
   // Group overdue slips first
   const sorted = [...slips].sort((a, b) => {
-    const aOverdue = a.status !== "Paid" && new Date(a.dueDate) < new Date();
-    const bOverdue = b.status !== "Paid" && new Date(b.dueDate) < new Date();
+    const aOverdue = a.status !== "PAGO" && new Date(a.dueDate) < new Date();
+    const bOverdue = b.status !== "PAGO" && new Date(b.dueDate) < new Date();
     if (aOverdue && !bOverdue) return -1;
     if (!aOverdue && bOverdue) return 1;
     return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
@@ -175,7 +214,7 @@ export default function Home() {
 
           {/* Summary Cards */}
           <section aria-label="Resumo financeiro do mês">
-            <SummaryCards slips={slips} budgetLimit={budgetLimit} />
+            <SummaryCards slips={slips} budgetLimit={budgetLimit} loading={loading} />
           </section>
 
           {/* Charts */}
@@ -232,8 +271,13 @@ export default function Home() {
         editingSlip={editingSlip}
       />
 
-      {/* ── Toast notifications ────────────────────────────────────────────── */}
-      <Celebration toasts={toasts} onDismiss={dismissToast} />
+      {/* ── Toast notifications & Salary Modal ────────────────────────────── */}
+      <Celebration
+        toasts={toasts}
+        onDismiss={dismissToast}
+        salaryToCelebrate={salaryToCelebrate}
+        onDismissSalary={() => setSalaryToCelebrate(null)}
+      />
     </>
   );
 }

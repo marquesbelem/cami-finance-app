@@ -15,33 +15,60 @@ Um painel financeiro pessoal moderno e interativo com conquistas gamificadas par
 | Camada | Tecnologia |
 |--------|-----------|
 | Framework | Next.js 16 (App Router) |
-| Banco de dados | SQLite via Prisma ORM |
+| Banco de dados | Supabase PostgreSQL via Prisma ORM |
 | Gráficos | Recharts |
 | Ícones | Lucide React |
 | Estilização | Vanilla CSS (CSS Modules) |
 | Fontes | Outfit + Inter (Google Fonts via `next/font`) |
+
+## 🧩 Agent Skills
+- Frontend Design: Sempre que houver solicitações de modificação de layout, UI ou UX, utilize obrigatoriamente a skill frontend-design (em: .agents/skills/frontend-design/SKILL.md) para garantir a qualidade estética.
+- Supabase & Prisma: Sempre que houver solicitações relacionadas a banco de dados, utilize obrigatoriamente a skill supabase-postgress-best-practices (em: .agents/skills/supabase-postgress-best-practices/SKILL.md) para garantir a qualidade do código.
 
 ## 🚀 Início Rápido
 
 ### Pré-requisitos
 - Node.js LTS (v20+)
 - npm v9+
+- Um projeto criado no [Supabase](https://supabase.com)
 
 ### Instalação e Setup
 
-```bash
-# 1. Instalar dependências
-npm install
+1. **Instalar dependências**
+   ```bash
+   npm install
+   ```
 
-# 2. Criar o banco de dados SQLite e aplicar o schema
-npx prisma db push
+2. **Configurar variáveis de ambiente**
+   Crie ou edite o arquivo `.env` na raiz do projeto:
+   ```env
+   # Link de conexão com o pool de conexões (modo Transaction - porta 6543)
+   DATABASE_URL="postgresql://postgres.[sua-ref-do-projeto]:[sua-senha]@aws-1-[sua-regiao].pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10"
 
-# 3. Inserir dados padrão (categorias e conquistas)
-npm run db:seed
+   # Link de conexão direta com o banco de dados (modo Session - porta 5432)
+   DIRECT_URL="postgresql://postgres:[sua-senha]@db.[sua-ref-do-projeto].supabase.co:5432/postgres"
+   ```
 
-# 4. Iniciar o servidor de desenvolvimento
-npm run dev
-```
+3. **Aplicar o schema do banco**
+   Sincronize as tabelas no Supabase:
+   ```bash
+   npx prisma db push
+   ```
+
+4. **Migração / Restauração de dados antigos (opcional)**
+   Caso tenha dados locais no SQLite (`prisma/dev.db`), você pode exportá-los e importá-los para o Supabase:
+   ```bash
+   # Exporta do SQLite para prisma/data-export.json
+   npm run db:export
+
+   # Importa o JSON para o Supabase mapeando para o usuário padrão "Principal"
+   npm run db:import
+   ```
+
+5. **Iniciar o servidor de desenvolvimento**
+   ```bash
+   npm run dev
+   ```
 
 Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
@@ -51,21 +78,23 @@ Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 |---------|-----------|
 | `npm run dev` | Servidor de desenvolvimento com hot-reload |
 | `npm run build` | Gera o build de produção |
-| `npm run db:push` | Sincroniza o schema Prisma com o banco |
-| `npm run db:seed` | Insere as categorias e conquistas padrão |
+| `npm run db:push` | Sincroniza o schema Prisma com o banco Supabase |
+| `npm run db:export` | Exporta os dados locais do SQLite para um JSON |
+| `npm run db:import` | Importa o JSON de backup para o banco Supabase |
 | `npm run db:studio` | Abre o Prisma Studio (visualizar dados) |
 
 ## 📁 Estrutura do Projeto
 
 ```
 prisma/
-├── schema.prisma    # Models: Category, PaymentSlip, Achievement, UserStats
-├── seed.ts          # Dados iniciais (categorias e conquistas)
-└── dev.db           # Arquivo SQLite local (git ignorado)
+├── schema.prisma    # Models: User, Category, PaymentSlip, Achievement, UserStats
+├── export.ts        # Script de exportação do SQLite
+├── import.ts        # Script de importação para o Supabase
+└── data-export.json # Dump dos dados exportados (git ignorado)
 
 public/
 └── uploads/         # Documentos PDF/imagem anexados aos boletos
-
+```
 src/
 ├── app/
 │   ├── api/

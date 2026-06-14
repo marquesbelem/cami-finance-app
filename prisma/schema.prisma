@@ -6,49 +6,93 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum SlipStatus {
+  PAGO
+  PENDENTE
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  createdAt DateTime @default(now())
+
+  categories   Category[]
+  slips        PaymentSlip[]
+  achievements Achievement[]
+  stats        UserStats?
 }
 
 model Category {
   id              String        @id @default(uuid())
-  name            String        @unique
+  name            String
   colorCode       String        // CSS color variable or hex code
   iconRef         String        // Lucide icon name
   isSystemDefault Boolean       @default(false) // Protects seed categories from deletion
   createdAt       DateTime      @default(now())  // Audit timestamp
+  
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
   slips           PaymentSlip[]
+
+  @@unique([name, userId])
 }
 
 model PaymentSlip {
-  id                  String   @id @default(uuid())
+  id                  String     @id @default(uuid())
   title               String
-  amount              Float    // Payment amount in standard decimal
+  amount              Float      // Payment amount in standard decimal
   dueDate             DateTime
-  status              String   // "Paid" or "Pending"
-  isCreditCardPayment Boolean  @default(false)
-  documentPath        String?  // Optional filesystem path to uploaded PDF/Image
-  createdAt           DateTime @default(now())
+  status              SlipStatus @default(PENDENTE)
+  isCreditCardPayment Boolean    @default(false)
+  documentPath        String?    // Optional filesystem path to uploaded PDF/Image
+  createdAt           DateTime   @default(now())
 
   categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  //                                                                            ^-- CHANGED: API layer handles reassignment before delete
+  category   Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  userId     String
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Achievement {
   id                 String    @id @default(uuid())
-  title              String    @unique
+  title              String
   description        String
   type               String    // "STREAK", "CARD_THRESHOLD", "SAVINGS"
   conditionValue     Float     // Threshold limit or target days
+  level              Int       @default(1) // Level of achievement in the trail (1, 2, 3)
   isUnlocked         Boolean   @default(false)
   progressPercentage Float     @default(0.0)
   unlockedAt         DateTime?
+
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([title, userId])
 }
 
 model UserStats {
-  id                String @id @default("singleton")
-  monthlyBudgetLimit Float  @default(2000.0)
+  id                 String @id // Maps directly to User.id
+  monthlyBudgetLimit Float  @default(50.0) // Percentage of scheduledSalaryAmount (0-100)
   totalCreditLimit   Float  @default(1000.0)
   currentStreakDays  Int    @default(0)
+
+  // Gamification fields
+  level                Int      @default(1)
+  xp                   Int      @default(0)
+  lastRegistrationDate String?  // Format: YYYY-MM-DD
+  registrationStreak   Int      @default(0)
+
+  // Salary fields
+  scheduledSalaryAmount     Float   @default(3000.0)
+  salaryPaymentDay          Int     @default(5)
+  lastSalaryValidationMonth String? // Format: YYYY-MM
+
+  user               User   @relation(fields: [id], references: [id], onDelete: Cascade)
 }

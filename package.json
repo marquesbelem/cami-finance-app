@@ -9,7 +9,9 @@
     "lint": "eslint",
     "db:push": "prisma db push",
     "db:seed": "ts-node prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:export": "ts-node prisma/export.ts",
+    "db:import": "ts-node prisma/import.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/upload";
-import { recomputeAchievements } from "@/lib/achievements";
+import { recomputeAchievements, awardXp } from "@/lib/achievements";
 
 // PUT /api/slips/[id]  (multipart/form-data — all fields optional)
 export async function PUT(
@@ -9,10 +9,17 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const userId = request.headers.get("x-user-id");
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
     const formData = await request.formData();
 
-    const existing = await prisma.paymentSlip.findUnique({ where: { id } });
+    const existing = await prisma.paymentSlip.findFirst({
+      where: { id, userId },
+    });
     if (!existing) {
       return NextResponse.json({ error: "Slip not found" }, { status: 404 });
     }
@@ -24,7 +31,7 @@ export async function PUT(
     const dueDate = rawDueDate
       ? new Date(rawDueDate as string)
       : existing.dueDate;
-    const status = (formData.get("status") as string) || existing.status;
+    const status = (formData.get("status") as any) || existing.status;
     const rawCredit = formData.get("isCreditCardPayment");
     const isCreditCardPayment =
       rawCredit !== null ? rawCredit === "true" : existing.isCreditCardPayment;
@@ -51,10 +58,25 @@ export async function PUT(
       include: { category: true },
     });
 
-    // Recompute achievements asynchronously after mutation
-    recomputeAchievements().catch(console.error);
+    // Award XP if changing status to PAGO and payment method is PIX/débito
+    const isPayingNow = status === "PAGO" && existing.status !== "PAGO";
+    const isDebitOrPix = !isCreditCardPayment;
+    let xpDetails = null;
 
-    return NextResponse.json(updated);
+    if (isPayingNow && isDebitOrPix) {
+      xpDetails = await awardXp(userId, 25).catch((err) => {
+        console.error("XP Error:", err);
+        return null;
+      });
+    }
+
+    // Recompute achievements asynchronously after mutation
+    recomputeAchievements(userId).catch(console.error);
+
+    return NextResponse.json({
+      ...updated,
+      xpDetails,
+    });
   } catch (error) {
     console.error("[PUT /api/slips/:id]", error);
     return NextResponse.json(
@@ -66,13 +88,20 @@ export async function PUT(
 
 // DELETE /api/slips/[id]
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const userId = request.headers.get("x-user-id");
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
 
-    const existing = await prisma.paymentSlip.findUnique({ where: { id } });
+    const existing = await prisma.paymentSlip.findFirst({
+      where: { id, userId },
+    });
     if (!existing) {
       return NextResponse.json({ error: "Slip not found" }, { status: 404 });
     }
@@ -80,7 +109,7 @@ export async function DELETE(
     await prisma.paymentSlip.delete({ where: { id } });
 
     // Recompute achievements asynchronously after mutation
-    recomputeAchievements().catch(console.error);
+    recomputeAchievements(userId).catch(console.error);
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

@@ -6,7 +6,7 @@ export interface Category {
   colorCode: string;
   iconRef: string;
   isSystemDefault: boolean;
-  createdAt: string;
+  createdAt: Date | string;
 }
 
 export interface CategoryWithCount extends Category {

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import type { CategoryWithCount } from "@/lib/types";
 
@@ -15,10 +15,29 @@ function isValidHex(color: string): boolean {
 }
 
 // GET /api/categories — list all categories with slip count
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const userId = request.headers.get("x-user-id");
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const categories: CategoryWithCount[] = await prisma.category.findMany({
-      include: { _count: { select: { slips: true } } },
+      where: {
+        OR: [
+          { userId: null },
+          { userId },
+        ],
+      },
+      include: {
+        _count: {
+          select: {
+            slips: {
+              where: { userId },
+            },
+          },
+        },
+      },
       orderBy: { name: "asc" },
     });
     return NextResponse.json(categories);
@@ -29,8 +48,13 @@ export async function GET() {
 }
 
 // POST /api/categories — create a new category
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const userId = request.headers.get("x-user-id");
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const { name, colorCode, iconRef } = body as {
       name?: string;
@@ -66,7 +90,13 @@ export async function POST(request: Request) {
 
     // ── Case-insensitive uniqueness check ───────────────────────────────────
     const existing = await prisma.category.findFirst({
-      where: { name: { equals: name.trim(), mode: "insensitive" } },
+      where: {
+        name: { equals: name.trim(), mode: "insensitive" },
+        OR: [
+          { userId: null },
+          { userId },
+        ],
+      },
     });
     if (existing) {
       return NextResponse.json(
@@ -77,8 +107,16 @@ export async function POST(request: Request) {
 
     // ── Create ──────────────────────────────────────────────────────────────
     const created = await prisma.category.create({
-      data: { name: name.trim(), colorCode, iconRef },
-      include: { _count: { select: { slips: true } } },
+      data: { name: name.trim(), colorCode, iconRef, userId },
+      include: {
+        _count: {
+          select: {
+            slips: {
+              where: { userId },
+            },
+          },
+        },
+      },
     });
 
     return NextResponse.json(created, { status: 201 });

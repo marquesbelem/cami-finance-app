@@ -279,3 +279,157 @@
   font-size: var(--text-sm);
   padding: var(--space-8) 0;
 }
+
+/* ── RPG Profiling HUD ── */
+.rpgProfile {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, var(--color-bg-surface) 0%, rgba(99, 102, 241, 0.04) 100%);
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.profileAvatar {
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-bg-overlay);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profileMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profileClass {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.profileLevelRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.levelLabel {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--color-brand);
+}
+
+.streakBadge {
+  font-size: 10px;
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-overlay);
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+}
+
+.xpProgressRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.xpBar {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.xpFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
+  box-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
+  transition: width var(--transition-slow);
+}
+
+.xpBarGloss {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.xpLabel {
+  font-size: 11px;
+  font-weight: var(--font-semibold);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.trailContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: relative;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--space-2);
+}
+
+.lvlBadge {
+  font-size: 9px;
+  font-weight: var(--font-bold);
+  background: var(--color-bg-overlay);
+  color: var(--color-text-secondary);
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.achChainLocked {
+  opacity: 0.55;
+  background: var(--color-bg-elevated);
+  border-style: dashed;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
+.lockedLabel {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  font-style: italic;
+  margin-top: 2px;
+}

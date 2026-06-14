@@ -166,3 +166,212 @@
   background: var(--color-bg-overlay);
   color: var(--color-text-primary);
 }
+
+/* Custom particle background from CSS property */
+.particle {
+  background: var(--color, var(--color-brand)) !important;
+}
+
+/* Toast XP Variant */
+.toast_xp {
+  border-left: 4px solid #6366f1;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, var(--color-bg-elevated) 100%);
+}
+.toast_xp :global(.iconWrap) {
+  background: rgba(99, 102, 241, 0.15) !important;
+  color: #6366f1 !important;
+}
+
+/* Toast Levelup Variant */
+.toast_levelup {
+  border-left: 4px solid #a855f7;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, var(--color-bg-elevated) 100%);
+  animation: levelupSlideIn var(--transition-spring) both, levelupPulse 3s infinite alternate 0.5s;
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
+}
+.toast_levelup :global(.iconWrap) {
+  background: rgba(168, 85, 247, 0.2) !important;
+  color: #a855f7 !important;
+  animation: spinGlow 2.5s linear infinite !important;
+}
+
+@keyframes levelupSlideIn {
+  from { opacity: 0; transform: translateX(50px) scale(0.9); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes levelupPulse {
+  0% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); border-color: rgba(168, 85, 247, 0.3); }
+  100% { box-shadow: 0 0 35px rgba(168, 85, 247, 0.45); border-color: rgba(168, 85, 247, 0.8); }
+}
+
+@keyframes spinGlow {
+  0% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 2px rgba(168, 85, 247, 0.4)); }
+  50% { transform: rotate(180deg) scale(1.1); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.8)); }
+  100% { transform: rotate(360deg) scale(1); filter: drop-shadow(0 0 2px rgba(168, 85, 247, 0.4)); }
+}
+
+.glowIcon {
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+/* ── Fullscreen Salary Celebration Modal ── */
+.salaryOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeInModal 0.4s ease-out both;
+  overflow: hidden;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.salaryModal {
+  position: relative;
+  background: var(--color-bg-elevated);
+  border: 2px solid var(--color-border-brand);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.2);
+  animation: popInModal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  z-index: 10000;
+}
+
+@keyframes popInModal {
+  from { opacity: 0; transform: scale(0.85) translateY(30px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.salaryIconWrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+  color: var(--color-brand);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-6) auto;
+  border: 2px solid var(--color-border-brand);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.15);
+  animation: bounceSal 3s ease-in-out infinite;
+}
+
+@keyframes bounceSal {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.salaryIcon {
+  color: #10b981;
+  filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.2));
+}
+
+.sparkleDecoration {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  color: #f59e0b;
+  animation: spinSparkle 4s linear infinite;
+}
+
+@keyframes spinSparkle {
+  from { transform: rotate(0deg) scale(0.9); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  to { transform: rotate(360deg) scale(0.9); }
+}
+
+.salaryTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  letter-spacing: var(--tracking-tight);
+}
+
+.salaryMessage {
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-4);
+}
+
+.salaryMessage strong {
+  color: #10b981;
+  font-size: var(--text-lg);
+}
+
+.salarySubMessage {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+.salaryClaimBtn {
+  width: 100%;
+  padding: var(--space-3) var(--space-6);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+.salaryClaimBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 20px -3px rgba(16, 185, 129, 0.45);
+  filter: brightness(1.05);
+}
+
+/* ── Confetti Rain animation ── */
+.confettiRain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.rainParticle {
+  position: absolute;
+  top: -20px;
+  width: 8px;
+  height: 15px;
+  opacity: 0.8;
+  background: var(--color);
+  transform: rotate(calc(var(--left) * 3));
+  animation: fallRain 5s linear var(--delay) infinite;
+}
+
+@keyframes fallRain {
+  0% {
+    top: -20px;
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    top: 105%;
+    transform: translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}

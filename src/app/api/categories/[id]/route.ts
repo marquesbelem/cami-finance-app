@@ -18,6 +18,11 @@ type RouteContext = { params: Promise<{ id: string }> };
 // PUT /api/categories/[id] — update name, colorCode, or iconRef
 export async function PUT(request: Request, context: RouteContext) {
   try {
+    const userId = request.headers.get("x-user-id");
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await context.params;
     const body = await request.json();
     const { name, colorCode, iconRef } = body as {
@@ -26,10 +31,12 @@ export async function PUT(request: Request, context: RouteContext) {
       iconRef?: string;
     };
 
-    // ── Verify existence ────────────────────────────────────────────────────
-    const category = await prisma.category.findUnique({ where: { id } });
+    // ── Verify existence and ownership ──────────────────────────────────────
+    const category = await prisma.category.findFirst({
+      where: { id, userId },
+    });
     if (!category) {
-      return NextResponse.json({ error: "Category not found." }, { status: 404 });
+      return NextResponse.json({ error: "Category not found or unauthorized." }, { status: 404 });
     }
 
     // ── Validate provided fields ────────────────────────────────────────────
@@ -50,6 +57,10 @@ export async function PUT(request: Request, context: RouteContext) {
       const conflict = await prisma.category.findFirst({
         where: {
           name: { equals: name.trim(), mode: "insensitive" },
+          OR: [
+            { userId: null },
+            { userId },
+          ],
           NOT: { id },
         },
       });
@@ -82,7 +93,15 @@ export async function PUT(request: Request, context: RouteContext) {
     const updated = await prisma.category.update({
       where: { id },
       data: updateData,
-      include: { _count: { select: { slips: true } } },
+      include: {
+        _count: {
+          select: {
+            slips: {
+              where: { userId },
+            },
+          },
+        },
+      },
     });
 
     return NextResponse.json(updated);
@@ -93,14 +112,21 @@ export async function PUT(request: Request, context: RouteContext) {
 }
 
 // DELETE /api/categories/[id] — delete category, reassign slips to "Sem Categoria"
-export async function DELETE(_request: Request, context: RouteContext) {
+export async function DELETE(request: Request, context: RouteContext) {
   try {
+    const userId = request.headers.get("x-user-id");
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await context.params;
 
-    // ── Verify existence ────────────────────────────────────────────────────
-    const category = await prisma.category.findUnique({ where: { id } });
+    // ── Verify existence and ownership ──────────────────────────────────────
+    const category = await prisma.category.findFirst({
+      where: { id, userId },
+    });
     if (!category) {
-      return NextResponse.json({ error: "Category not found." }, { status: 404 });
+      return NextResponse.json({ error: "Category not found or unauthorized." }, { status: 404 });
     }
 
     // ── Block system-default deletion ───────────────────────────────────────
@@ -125,7 +151,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     // ── Atomic transaction: reassign slips → delete category ────────────────
     await prisma.$transaction([
       prisma.paymentSlip.updateMany({
-        where: { categoryId: id },
+        where: { categoryId: id, userId },
         data: { categoryId: fallback.id },
       }),
       prisma.category.delete({ where: { id } }),

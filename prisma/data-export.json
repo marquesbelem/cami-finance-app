@@ -1,0 +1,93 @@
+{
+  "categories": [
+    {
+      "id": "cae3a7bb-986a-4ec6-b60e-7daa23972cea",
+      "name": "Sem Categoria",
+      "colorCode": "#6b7280",
+      "iconRef": "FolderOpen",
+      "isSystemDefault": true,
+      "createdAt": "2026-06-06T16:15:49.078Z"
+    },
+    {
+      "id": "b9ca84d3-01aa-49e8-b28a-8b86411b8045",
+      "name": "Moradia",
+      "colorCode": "#f59e0b",
+      "iconRef": "Home",
+      "isSystemDefault": true,
+      "createdAt": "2026-06-06T16:15:49.088Z"
+    },
+    {
+      "id": "276a81f5-8d37-4f49-a381-5dc6195c81bf",
+      "name": "Utilidades",
+      "colorCode": "#3b82f6",
+      "iconRef": "Zap",
+      "isSystemDefault": true,
+      "createdAt": "2026-06-06T16:15:49.096Z"
+    },
+    {
+      "id": "917eca97-08ca-4158-8367-9d8f376f24cb",
+      "name": "Alimentação",
+      "colorCode": "#10b981",
+      "iconRef": "Utensils",
+      "isSystemDefault": true,
+      "createdAt": "2026-06-06T16:15:49.103Z"
+    },
+    {
+      "id": "d9bcb839-9371-45fa-b813-65e03b1983a7",
+      "name": "Lazer",
+      "colorCode": "#8b5cf6",
+      "iconRef": "Music",
+      "isSystemDefault": true,
+      "createdAt": "2026-06-06T16:15:49.110Z"
+    },
+    {
+      "id": "0e05e1ec-27c7-4d98-bd97-a482e450fa2f",
+      "name": "Cartão de Crédito",
+      "colorCode": "#ef4444",
+      "iconRef": "CreditCard",
+      "isSystemDefault": true,
+      "createdAt": "2026-06-06T16:15:49.117Z"
+    }
+  ],
+  "paymentSlips": [],
+  "achievements": [
+    {
+      "id": "c9348151-87ec-48bd-95e7-395fe268b0e1",
+      "title": "Econômico",
+      "description": "Mantenha o gasto no cartão de crédito abaixo de 20% do total mensal.",
+      "type": "CARD_THRESHOLD",
+      "conditionValue": 20,
+      "isUnlocked": false,
+      "progressPercentage": 0,
+      "unlockedAt": null
+    },
+    {
+      "id": "2fad53bb-345e-47ae-8453-58d381604275",
+      "title": "Sem Cartão",
+      "description": "Pague todos os boletos do mês sem usar o cartão de crédito.",
+      "type": "STREAK",
+      "conditionValue": 30,
+      "isUnlocked": false,
+      "progressPercentage": 0,
+      "unlockedAt": null
+    },
+    {
+      "id": "47fe1858-9151-478f-b8d8-bb1bd64144f1",
+      "title": "Poupador",
+      "description": "Gaste menos de 50% do seu limite mensal de orçamento.",
+      "type": "SAVINGS",
+      "conditionValue": 50,
+      "isUnlocked": false,
+      "progressPercentage": 0,
+      "unlockedAt": null
+    }
+  ],
+  "userStats": [
+    {
+      "id": "singleton",
+      "monthlyBudgetLimit": 2000,
+      "totalCreditLimit": 1000,
+      "currentStreakDays": 0
+    }
+  ]
+}

@@ -42,6 +42,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   // Load categories on mount
   useEffect(() => {
@@ -65,11 +66,19 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
     }
   }, [editingSlip, isOpen]);
 
+  // Auto-focus the title field whenever the modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+    // Small delay lets the modal finish rendering before focusing
+    const id = setTimeout(() => titleInputRef.current?.focus(), 50);
+    return () => clearTimeout(id);
+  }, [isOpen]);
+
   function resetForm() {
     setTitle("");
     setAmount("");
     setDueDate("");
-    setStatus("Pending");
+    setStatus("PENDENTE");
     setCategoryId(categories[0]?.id ?? "");
     setIsCreditCardPayment(false);
     setFile(null);
@@ -148,6 +157,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
             </label>
             <input
               id="slip-title"
+              ref={titleInputRef}
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -223,8 +233,8 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
                 onChange={(e) => setStatus(e.target.value)}
                 className={styles.input}
               >
-                <option value="Pending">Pendente</option>
-                <option value="Paid">Pago</option>
+                <option value="PENDENTE">Pendente</option>
+                <option value="PAGO">Pago</option>
               </select>
             </div>
           </div>

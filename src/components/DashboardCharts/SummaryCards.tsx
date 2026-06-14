@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingDown, TrendingUp, Clock, Wallet } from "lucide-react";
+import { Heart, Shield, Clock, Swords } from "lucide-react";
 import styles from "./SummaryCards.module.css";
 
 interface Slip {
@@ -12,93 +12,126 @@ interface Slip {
 interface Props {
   slips: Slip[];
   budgetLimit: number;
+  loading?: boolean;
 }
 
 function formatCurrency(value: number): string {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-export default function SummaryCards({ slips, budgetLimit }: Props) {
+export default function SummaryCards({ slips, budgetLimit, loading }: Props) {
+  if (loading) {
+    return (
+      <div className={styles.grid}>
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <article key={idx} className={styles.card}>
+            <div className={`${styles.iconWrap} ${styles.skeletonIcon}`} />
+            <div className={styles.info} style={{ width: "100%" }}>
+              <div className={styles.skeletonLabel} />
+              <div className={styles.skeletonValue} />
+              {idx === 0 && (
+                <div className={styles.skeletonBar} style={{ marginTop: "10px" }} />
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    );
+  }
+
   const totalSpent = slips.reduce((sum, s) => sum + s.amount, 0);
-  const paidTotal = slips.filter((s) => s.status === "Paid").reduce((sum, s) => sum + s.amount, 0);
-  const pendingTotal = slips.filter((s) => s.status !== "Paid").reduce((sum, s) => sum + s.amount, 0);
+  const paidTotal = slips.filter((s) => s.status === "PAGO").reduce((sum, s) => sum + s.amount, 0);
+  const pendingTotal = slips.filter((s) => s.status !== "PAGO").reduce((sum, s) => sum + s.amount, 0);
   const creditTotal = slips.filter((s) => s.isCreditCardPayment).reduce((sum, s) => sum + s.amount, 0);
-  const budgetUsedPct = budgetLimit > 0 ? Math.min(100, (totalSpent / budgetLimit) * 100) : 0;
-  const pendingCount = slips.filter((s) => s.status !== "Paid").length;
+
+  // Remaining budget represents the user's Health Points (HP)
+  const remainingBudget = Math.max(0, budgetLimit - totalSpent);
+  const hpPct = budgetLimit > 0 ? Math.min(100, (remainingBudget / budgetLimit) * 100) : 0;
+  const pendingCount = slips.filter((s) => s.status !== "PAGO").length;
+
+  const isCritical = hpPct < 20;
 
   return (
     <div className={styles.grid}>
-      {/* Total Spent */}
-      <article className={styles.card} aria-label="Total gasto no mês">
-        <div className={`${styles.iconWrap} ${styles.iconBrand}`}>
-          <Wallet size={20} />
+      {/* RPG Health Card (HP) */}
+      <article
+        className={`${styles.card} ${styles.rpgCard} ${isCritical ? styles.cardCritical : ""}`}
+        aria-label="Pontos de vida de orçamento (HP)"
+      >
+        <div className={`${styles.iconWrap} ${hpPct >= 50 ? styles.iconHpGreen : hpPct >= 20 ? styles.iconHpYellow : styles.iconHpRed} ${isCritical ? styles.pulseHeart : ""}`}>
+          <Heart size={20} fill="currentColor" />
         </div>
         <div className={styles.info}>
-          <span className={styles.label}>Total do Mês</span>
-          <span className={styles.value}>{formatCurrency(totalSpent)}</span>
+          <div className={styles.rpgHeader}>
+            <span className={styles.label}>HP do Orçamento</span>
+            {isCritical && <span className={styles.criticalBadge}>CRÍTICO</span>}
+          </div>
+          <span className={styles.value}>{formatCurrency(remainingBudget)}</span>
           {budgetLimit > 0 && (
             <div className={styles.progressWrap}>
-              <div className={styles.progressBar}>
+              <div className={styles.rpgProgressBar}>
                 <div
-                  className={`${styles.progressFill} ${budgetUsedPct >= 90 ? styles.progressDanger : budgetUsedPct >= 70 ? styles.progressWarning : styles.progressBrand}`}
-                  style={{ width: `${budgetUsedPct}%` }}
+                  className={`${styles.rpgProgressFill} ${
+                    hpPct >= 50 ? styles.hpGreen : hpPct >= 20 ? styles.hpYellow : styles.hpRed
+                  }`}
+                  style={{ width: `${hpPct}%` }}
                 />
+                <div className={styles.barGloss} />
               </div>
               <span className={styles.progressLabel}>
-                {budgetUsedPct.toFixed(0)}% do limite (
-                {formatCurrency(budgetLimit)})
+                HP: {remainingBudget.toFixed(0)} / {budgetLimit.toFixed(0)} ({hpPct.toFixed(0)}%)
               </span>
             </div>
           )}
         </div>
       </article>
 
-      {/* Paid */}
+      {/* Paid (Shield) */}
       <article className={styles.card} aria-label="Total pago">
         <div className={`${styles.iconWrap} ${styles.iconSuccess}`}>
-          <TrendingDown size={20} />
+          <Shield size={20} />
         </div>
         <div className={styles.info}>
-          <span className={styles.label}>Pago</span>
+          <span className={styles.label}>Defesa (Paga)</span>
           <span className={`${styles.value} ${styles.valueSuccess}`}>
             {formatCurrency(paidTotal)}
           </span>
           <span className={styles.sub}>
-            {slips.filter((s) => s.status === "Paid").length} boletos
+            {slips.filter((s) => s.status === "PAGO").length} boletos defendidos
           </span>
         </div>
       </article>
 
-      {/* Pending */}
+      {/* Pending (Clock) */}
       <article className={styles.card} aria-label="Total pendente">
         <div className={`${styles.iconWrap} ${styles.iconWarning}`}>
           <Clock size={20} />
         </div>
         <div className={styles.info}>
-          <span className={styles.label}>Pendente</span>
+          <span className={styles.label}>Ameaças (Pendentes)</span>
           <span className={`${styles.value} ${styles.valueWarning}`}>
             {formatCurrency(pendingTotal)}
           </span>
           <span className={styles.sub}>
-            {pendingCount} boleto{pendingCount !== 1 ? "s" : ""}
+            {pendingCount} monstro{pendingCount !== 1 ? "s" : ""} ativo{pendingCount !== 1 ? "s" : ""}
           </span>
         </div>
       </article>
 
-      {/* Credit Card */}
+      {/* Credit Card (Swords - Avoid at all costs!) */}
       <article className={styles.card} aria-label="Gastos no cartão de crédito">
         <div className={`${styles.iconWrap} ${styles.iconDanger}`}>
-          <TrendingUp size={20} />
+          <Swords size={20} />
         </div>
         <div className={styles.info}>
-          <span className={styles.label}>Cartão de Crédito</span>
+          <span className={styles.label}>Uso do Cartão</span>
           <span className={`${styles.value} ${styles.valueDanger}`}>
             {formatCurrency(creditTotal)}
           </span>
           <span className={styles.sub}>
             {totalSpent > 0
-              ? `${((creditTotal / totalSpent) * 100).toFixed(0)}% do total`
-              : "—"}
+              ? `${((creditTotal / totalSpent) * 100).toFixed(0)}% do dano sofrido`
+              : "0% de dano"}
           </span>
         </div>
       </article>

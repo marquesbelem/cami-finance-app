@@ -31,7 +31,7 @@ interface Props {
 }
 
 function getSlipState(slip: Slip): "paid" | "overdue" | "pending" {
-  if (slip.status === "Paid") return "paid";
+  if (slip.status === "PAGO") return "paid";
   const due = new Date(slip.dueDate);
   if (due < new Date()) return "overdue";
   return "pending";

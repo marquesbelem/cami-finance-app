@@ -76,8 +76,8 @@ export default function DashboardCharts({ slips }: Props) {
   // ── Paid vs Pending for bar chart ─────────────────────────────────────────
   const barData = donutData.map((d) => {
     const catSlips = slips.filter((s) => s.category.name === d.name);
-    const paid = catSlips.filter((s) => s.status === "Paid").reduce((sum, s) => sum + s.amount, 0);
-    const pending = catSlips.filter((s) => s.status !== "Paid").reduce((sum, s) => sum + s.amount, 0);
+    const paid = catSlips.filter((s) => s.status === "PAGO").reduce((sum, s) => sum + s.amount, 0);
+    const pending = catSlips.filter((s) => s.status !== "PAGO").reduce((sum, s) => sum + s.amount, 0);
     return { name: d.name, Pago: paid, Pendente: pending };
   });
 
