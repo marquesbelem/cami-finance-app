@@ -28,6 +28,7 @@ interface UserStats {
 
 interface Props {
   onAchievementUnlocked?: (title: string) => void;
+  onSettingsSaved?: () => void;
 }
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
@@ -60,7 +61,7 @@ function getCharacterEmoji(level: number): string {
   return "👑";
 }
 
-export default function AchievementsPanel({ onAchievementUnlocked }: Props) {
+export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSaved }: Props) {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -115,14 +116,17 @@ export default function AchievementsPanel({ onAchievementUnlocked }: Props) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        monthlyBudgetLimit: parseFloat(budgetLimit) || undefined,
-        totalCreditLimit: parseFloat(creditLimit) || undefined,
-        scheduledSalaryAmount: parseFloat(salaryAmount) || undefined,
-        salaryPaymentDay: parseInt(paymentDay) || undefined,
+        monthlyBudgetLimit: (budgetLimit !== "" && !isNaN(parseFloat(budgetLimit))) ? parseFloat(budgetLimit) : undefined,
+        totalCreditLimit: (creditLimit !== "" && !isNaN(parseFloat(creditLimit))) ? parseFloat(creditLimit) : undefined,
+        scheduledSalaryAmount: (salaryAmount !== "" && !isNaN(parseFloat(salaryAmount))) ? parseFloat(salaryAmount) : undefined,
+        salaryPaymentDay: (paymentDay !== "" && !isNaN(parseInt(paymentDay))) ? parseInt(paymentDay) : undefined,
       }),
     });
     setShowSettings(false);
     await loadData();
+    if (onSettingsSaved) {
+      onSettingsSaved();
+    }
   }
 
   if (loading) {

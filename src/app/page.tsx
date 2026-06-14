@@ -33,7 +33,7 @@ function shiftMonth(ym: string, delta: number): string {
 // ── Page ───────────────────────────────────────────────────────────────────────
 export default function Home() {
   const [slips, setSlips] = useState<Slip[]>([]);
-  const [budgetLimit, setBudgetLimit] = useState(2000);
+  const [budgetLimit, setBudgetLimit] = useState(0);
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSlip, setEditingSlip] = useState<Slip | null>(null);
@@ -43,8 +43,8 @@ export default function Home() {
   const { toasts, dismissToast, celebrateAchievement, addToast, showXpToast, showLevelUpToast } = useToasts();
 
   // ── Data loading ──────────────────────────────────────────────────────────
-  const loadSlips = useCallback(async () => {
-    setLoading(true);
+  const loadSlips = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [slipsRes, statsRes] = await Promise.all([
         fetch(`/api/slips?month=${selectedMonth}`),
@@ -70,7 +70,7 @@ export default function Home() {
     } catch {
       addToast({ title: "Erro", message: "Falha ao carregar boletos.", type: "danger" });
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [selectedMonth, addToast]);
 
@@ -165,7 +165,10 @@ export default function Home() {
       <div className={styles.layout}>
         {/* ── Sidebar: Achievements ─────────────────────────────────────── */}
         <aside className={styles.sidebar}>
-          <AchievementsPanel onAchievementUnlocked={celebrateAchievement} />
+          <AchievementsPanel
+            onAchievementUnlocked={celebrateAchievement}
+            onSettingsSaved={() => loadSlips(true)}
+          />
         </aside>
 
         {/* ── Main content ──────────────────────────────────────────────── */}
