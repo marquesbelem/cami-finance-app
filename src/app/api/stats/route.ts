@@ -76,6 +76,7 @@ export async function PUT(request: NextRequest) {
       currentStreakDays,
       scheduledSalaryAmount,
       salaryPaymentDay,
+      leisureBudget,
     } = body;
 
     const updated = await prisma.userStats.upsert({
@@ -86,6 +87,7 @@ export async function PUT(request: NextRequest) {
         ...(currentStreakDays !== undefined && { currentStreakDays }),
         ...(scheduledSalaryAmount !== undefined && { scheduledSalaryAmount }),
         ...(salaryPaymentDay !== undefined && { salaryPaymentDay }),
+        ...(leisureBudget !== undefined && { leisureBudget }),
       },
       create: {
         id: userId,
@@ -94,6 +96,7 @@ export async function PUT(request: NextRequest) {
         currentStreakDays: currentStreakDays ?? 0,
         scheduledSalaryAmount: scheduledSalaryAmount ?? 3000,
         salaryPaymentDay: salaryPaymentDay ?? 5,
+        leisureBudget: leisureBudget ?? 0,
       },
     });
 

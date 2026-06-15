@@ -21,10 +21,11 @@ model User {
   username  String   @unique
   createdAt DateTime @default(now())
 
-  categories   Category[]
-  slips        PaymentSlip[]
-  achievements Achievement[]
-  stats        UserStats?
+  categories    Category[]
+  slips         PaymentSlip[]
+  achievements  Achievement[]
+  stats         UserStats?
+  extraIncomes  ExtraIncome[]
 }
 
 model Category {
@@ -89,10 +90,24 @@ model UserStats {
   lastRegistrationDate String?  // Format: YYYY-MM-DD
   registrationStreak   Int      @default(0)
 
+  // Leisure budget
+  leisureBudget            Float    @default(0.0) // Monthly leisure budget in R$
+
   // Salary fields
   scheduledSalaryAmount     Float   @default(3000.0)
   salaryPaymentDay          Int     @default(5)
   lastSalaryValidationMonth String? // Format: YYYY-MM
 
   user               User   @relation(fields: [id], references: [id], onDelete: Cascade)
+}
+
+model ExtraIncome {
+  id          String   @id @default(uuid())
+  amount      Float    // Extra income amount in BRL
+  description String   // e.g. "Freela", "Venda de produto", "Bônus"
+  month       String   // Format: YYYY-MM (which month this income applies to)
+  createdAt   DateTime @default(now())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

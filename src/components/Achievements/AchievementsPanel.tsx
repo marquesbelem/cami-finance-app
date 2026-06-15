@@ -24,6 +24,7 @@ interface UserStats {
   xp: number;
   scheduledSalaryAmount: number;
   salaryPaymentDay: number;
+  leisureBudget: number;
 }
 
 interface Props {
@@ -72,6 +73,7 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
   const [creditLimit, setCreditLimit] = useState("");
   const [salaryAmount, setSalaryAmount] = useState("");
   const [paymentDay, setPaymentDay] = useState("");
+  const [leisureBudget, setLeisureBudget] = useState("");
 
   // Stable ref so interval callback always reads the latest achievements list
   const achievementsRef = useRef<Achievement[]>([]);
@@ -93,6 +95,7 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
       setCreditLimit(statsData.totalCreditLimit.toString());
       setSalaryAmount(statsData.scheduledSalaryAmount.toString());
       setPaymentDay(statsData.salaryPaymentDay.toString());
+      setLeisureBudget(statsData.leisureBudget?.toString() ?? "0");
     }
 
     // Fire notification for newly unlocked achievements
@@ -123,6 +126,7 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
         totalCreditLimit: (creditLimit !== "" && !isNaN(parseFloat(creditLimit))) ? parseFloat(creditLimit) : undefined,
         scheduledSalaryAmount: (salaryAmount !== "" && !isNaN(parseFloat(salaryAmount))) ? parseFloat(salaryAmount) : undefined,
         salaryPaymentDay: (paymentDay !== "" && !isNaN(parseInt(paymentDay))) ? parseInt(paymentDay) : undefined,
+        leisureBudget: (leisureBudget !== "" && !isNaN(parseFloat(leisureBudget))) ? parseFloat(leisureBudget) : undefined,
       }),
     });
     setShowSettings(false);
@@ -266,6 +270,20 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
                 max="31"
                 value={paymentDay}
                 onChange={(e) => setPaymentDay(e.target.value)}
+                className={styles.inlineInput}
+              />
+            </div>
+            <div>
+              <label className={styles.inlineLabel} htmlFor="leisure-budget">
+                Orçamento de Lazer (R$)
+              </label>
+              <input
+                id="leisure-budget"
+                type="number"
+                min="0"
+                step="0.01"
+                value={leisureBudget}
+                onChange={(e) => setLeisureBudget(e.target.value)}
                 className={styles.inlineInput}
               />
             </div>

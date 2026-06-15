@@ -1,0 +1,267 @@
+.card {
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg, rgba(30, 30, 46, 0.85));
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.08);
+}
+
+/* ── Over budget state ─────────────────────────────────── */
+.cardOverBudget {
+  border-color: rgba(239, 68, 68, 0.4);
+  animation: pulseRedGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseRedGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.1); }
+  50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.25); }
+}
+
+/* ── Not configured state ─────────────────────────────── */
+.notConfigured {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.emptyIcon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.emptyTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary, #e2e8f0);
+  margin: 0 0 4px;
+}
+
+.emptyHint {
+  font-size: 0.78rem;
+  color: var(--text-muted, #94a3b8);
+  margin: 0;
+}
+
+/* ── Header ────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.iconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.3rem;
+}
+
+.iconSafe {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+}
+
+.iconWarning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.iconDanger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  animation: pulseIcon 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseIcon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+.meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.badgeSafe {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.badgeWarning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.badgeDanger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+/* ── Value display ─────────────────────────────────────── */
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary, #e2e8f0);
+  line-height: 1;
+}
+
+.valueNegative {
+  color: #f87171;
+}
+
+.valueSuffix {
+  font-size: 0.78rem;
+  color: var(--text-muted, #94a3b8);
+  font-weight: 400;
+}
+
+/* ── Progress bar ──────────────────────────────────────── */
+.progressSection {
+  margin-top: 14px;
+}
+
+.progressBar {
+  position: relative;
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.fillSafe {
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+
+.fillWarning {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.fillDanger {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.barGloss {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), transparent);
+  border-radius: 5px 5px 0 0;
+  pointer-events: none;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.72rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+/* ── Breakdown items ───────────────────────────────────── */
+.breakdown {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.breakdownItem {
+  flex: 1;
+}
+
+.breakdownLabel {
+  font-size: 0.7rem;
+  color: var(--text-muted, #94a3b8);
+  display: block;
+}
+
+.breakdownValue {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary, #e2e8f0);
+}
+
+.spentValue {
+  color: #fbbf24;
+}
+
+/* ── Skeleton ──────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.04) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+.skeletonHeader {
+  height: 40px;
+  width: 70%;
+  margin-bottom: 12px;
+}
+
+.skeletonBar {
+  height: 10px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.skeletonValue {
+  height: 24px;
+  width: 50%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

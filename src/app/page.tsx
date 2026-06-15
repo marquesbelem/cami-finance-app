@@ -8,6 +8,7 @@ import DashboardCharts from "@/components/DashboardCharts/DashboardCharts";
 import SummaryCards from "@/components/DashboardCharts/SummaryCards";
 import AchievementsPanel from "@/components/Achievements/AchievementsPanel";
 import Celebration, { useToasts } from "@/components/Achievements/Celebration";
+import LeisureBudgetCard from "@/components/LeisureBudgetCard/LeisureBudgetCard";
 import styles from "./page.module.css";
 
 // ── Month helpers ──────────────────────────────────────────────────────────────
@@ -40,6 +41,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<Record<string, boolean>>({});
   const [salaryToCelebrate, setSalaryToCelebrate] = useState<{ amount: number; month: string } | null>(null);
+  const [leisureData, setLeisureData] = useState<any>(null);
+  const [leisureLoading, setLeisureLoading] = useState(true);
 
   const { toasts, dismissToast, celebrateAchievement, addToast, showXpToast, showLevelUpToast } = useToasts();
 
@@ -79,6 +82,24 @@ export default function Home() {
     loadSlips();
   }, [loadSlips]);
 
+  // ── Leisure budget loading ───────────────────────────────────────────────
+  const loadLeisureBudget = useCallback(async () => {
+    setLeisureLoading(true);
+    try {
+      const res = await fetch(`/api/leisure-budget?month=${selectedMonth}`);
+      const data = await res.json();
+      setLeisureData(data);
+    } catch {
+      setLeisureData(null);
+    } finally {
+      setLeisureLoading(false);
+    }
+  }, [selectedMonth]);
+
+  useEffect(() => {
+    loadLeisureBudget();
+  }, [loadLeisureBudget]);
+
   // ── Handlers ──────────────────────────────────────────────────────────────
   function handleSave(saved: Slip) {
     setSlips((prev) => {
@@ -95,6 +116,9 @@ export default function Home() {
       message: saved.title,
       type: "success",
     });
+
+    // Refresh leisure budget in case this slip is in Lazer category
+    loadLeisureBudget();
 
     // Award XP and show toasts if metadata exists
     const xpDetails = (saved as any).xpDetails;
@@ -124,6 +148,8 @@ export default function Home() {
     if (deleted) {
       addToast({ title: "Boleto excluído", message: deleted.title, type: "info" });
     }
+    // Refresh leisure budget in case deleted slip was Lazer
+    loadLeisureBudget();
   }
 
   async function handleStatusToggle(slip: Slip) {
@@ -205,7 +231,7 @@ export default function Home() {
         <aside className={styles.sidebar}>
           <AchievementsPanel
             onAchievementUnlocked={celebrateAchievement}
-            onSettingsSaved={() => loadSlips(true)}
+            onSettingsSaved={() => { loadSlips(true); loadLeisureBudget(); }}
           />
         </aside>
 
@@ -256,6 +282,11 @@ export default function Home() {
           {/* Summary Cards */}
           <section aria-label="Resumo financeiro do mês">
             <SummaryCards slips={slips} budgetLimit={budgetLimit} loading={loading} />
+          </section>
+
+          {/* Leisure Budget Card */}
+          <section aria-label="Orçamento de lazer">
+            <LeisureBudgetCard data={leisureData} loading={leisureLoading} />
           </section>
 
           {/* Charts */}
