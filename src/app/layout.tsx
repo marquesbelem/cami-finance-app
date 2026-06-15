@@ -23,11 +23,11 @@ const inter = Inter({
 
 // ── SEO Metadata ───────────────────────────────────────────────────────────
 export const metadata: Metadata = {
-  title: "Cami Finance – Gerenciador Financeiro Gamificado",
+  title: "Capivara Poupadora – Gerenciador Financeiro Gamificado",
   description:
-    "Controle seus boletos, acompanhe seus gastos por mês e desbloqueie conquistas para economizar mais. O seu painel financeiro pessoal, moderno e interativo.",
-  keywords: ["finanças pessoais", "boletos", "conquistas", "dashboard", "economias"],
-  authors: [{ name: "Cami Finance" }],
+    "Controle suas despesas, acompanhe seus gastos por mês e desbloqueie conquistas para economizar mais. O seu painel financeiro pessoal, moderno e interativo.",
+  keywords: ["finanças pessoais", "despesas", "conquistas", "dashboard", "economias"],
+  authors: [{ name: "Capivara Poupadora" }],
   robots: "index, follow",
 };
 

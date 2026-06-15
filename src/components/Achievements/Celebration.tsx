@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Trophy, X, Sparkles, Award, Wallet } from "lucide-react";
 import styles from "./Celebration.module.css";
 
@@ -25,7 +26,18 @@ export default function Celebration({
   salaryToCelebrate,
   onDismissSalary,
 }: Props) {
-  return (
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const portalRoot = document.getElementById("portal-root");
+  if (!portalRoot) return null;
+
+  return createPortal(
     <>
       {/* Toasts list */}
       <div className={styles.host} aria-live="assertive" aria-atomic="false">
@@ -89,7 +101,8 @@ export default function Celebration({
           </div>
         </div>
       )}
-    </>
+    </>,
+    portalRoot
   );
 }
 

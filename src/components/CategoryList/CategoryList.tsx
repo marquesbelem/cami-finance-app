@@ -36,7 +36,7 @@ export default function CategoryList({ categories, onAdd, onEdit, onDelete }: Pr
         </div>
         <h2 className={styles.emptyTitle}>Nenhuma categoria ainda</h2>
         <p className={styles.emptyHint}>
-          Crie categorias para organizar seus boletos por tipo de gasto.
+          Crie categorias para organizar suas despesas por tipo de gasto.
         </p>
         <button
           id="add-category-empty-btn"

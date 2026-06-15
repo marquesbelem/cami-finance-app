@@ -57,7 +57,7 @@ export default function DashboardCharts({ slips }: Props) {
     return (
       <div className={styles.empty}>
         <span className={styles.emptyIcon}>📊</span>
-        <p>Nenhum boleto neste mês para visualizar.</p>
+        <p>Nenhuma despesa neste mês para visualizar.</p>
       </div>
     );
   }

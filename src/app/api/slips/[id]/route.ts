@@ -21,7 +21,7 @@ export async function PUT(
       where: { id, userId },
     });
     if (!existing) {
-      return NextResponse.json({ error: "Boleto não encontrado" }, { status: 404 });
+      return NextResponse.json({ error: "Despesa não encontrada" }, { status: 404 });
     }
 
     const title = (formData.get("title") as string) || existing.title;
@@ -35,6 +35,9 @@ export async function PUT(
     const rawCredit = formData.get("isCreditCardPayment");
     const isCreditCardPayment =
       rawCredit !== null ? rawCredit === "true" : existing.isCreditCardPayment;
+    const rawRecurring = formData.get("isRecurring");
+    const isRecurring =
+      rawRecurring !== null ? rawRecurring === "true" : existing.isRecurring;
     const categoryId =
       (formData.get("categoryId") as string) || existing.categoryId;
     const file = formData.get("document") as File | null;
@@ -52,6 +55,8 @@ export async function PUT(
         dueDate,
         status,
         isCreditCardPayment,
+        isRecurring,
+        recurringDay: isRecurring ? dueDate.getDate() : null,
         categoryId,
         documentPath,
       },
@@ -80,7 +85,7 @@ export async function PUT(
   } catch (error) {
     console.error("[PUT /api/slips/:id]", error);
     return NextResponse.json(
-      { error: "Falha ao atualizar o boleto" },
+      { error: "Falha ao atualizar a despesa" },
       { status: 500 }
     );
   }
@@ -103,7 +108,7 @@ export async function DELETE(
       where: { id, userId },
     });
     if (!existing) {
-      return NextResponse.json({ error: "Boleto não encontrado" }, { status: 404 });
+      return NextResponse.json({ error: "Despesa não encontrada" }, { status: 404 });
     }
 
     await prisma.paymentSlip.delete({ where: { id } });
@@ -115,7 +120,7 @@ export async function DELETE(
   } catch (error) {
     console.error("[DELETE /api/slips/:id]", error);
     return NextResponse.json(
-      { error: "Falha ao excluir o boleto" },
+      { error: "Falha ao excluir a despesa" },
       { status: 500 }
     );
   }

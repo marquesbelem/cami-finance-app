@@ -6,6 +6,18 @@
   overflow-y: auto;
 }
 
+.mascotContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2) 0;
+  margin-bottom: calc(var(--space-2) * -1);
+  height: 180px;
+  overflow: hidden;
+}
+
 /* ── Panel Header ───────────────────────────────────────────────────────────── */
 .panelHeader {
   display: flex;
@@ -16,10 +28,37 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.panelTitleRow {
+.panelTitleButton {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  width: 100%;
+}
+
+.toggleChevron {
+  display: none; /* Hidden on desktop */
+}
+
+/* ── Collapsible Content (smooth grid transition) ── */
+.collapsibleContent {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows var(--transition-base), opacity var(--transition-base);
+}
+
+.collapsibleInner {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .trophyIcon {
@@ -439,6 +478,33 @@
   /* Panel is now full-width above main content — reduce vertical density */
   .panel {
     gap: var(--space-3);
+  }
+
+  .panelTitleButton {
+    cursor: pointer;
+  }
+  
+  .toggleChevron {
+    display: block;
+    margin-left: auto;
+    color: var(--color-text-secondary);
+    transition: transform var(--transition-fast);
+  }
+
+  .toggleChevronOpen {
+    transform: rotate(180deg);
+  }
+
+  .collapsibleContent {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  .treeExpanded {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    margin-top: var(--space-4);
   }
 
   /* Trail cards sit side-by-side in a horizontal scroll on tablet */

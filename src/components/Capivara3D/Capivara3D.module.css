@@ -1,0 +1,129 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+  height: 220px;
+  user-select: none;
+}
+
+.scene {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  perspective: 800px;
+  perspective-origin: 50% 30%;
+}
+
+.capivara {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(-15deg) rotateY(45deg);
+  animation: floatAndRotate 6s ease-in-out infinite;
+}
+
+/* 3D Cube Base */
+.cube {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* Position faces based on dimensions w, h, d passed as variables */
+.front {
+  width: var(--w);
+  height: var(--h);
+  background: var(--color-base);
+  transform: rotateY(0deg) translateZ(calc(var(--d) / 2));
+}
+
+.back {
+  width: var(--w);
+  height: var(--h);
+  background: var(--color-base);
+  transform: rotateY(180deg) translateZ(calc(var(--d) / 2));
+  filter: brightness(0.85);
+}
+
+.left {
+  width: var(--d);
+  height: var(--h);
+  background: var(--color-side);
+  transform: rotateY(-90deg) translateZ(calc(var(--w) / 2));
+  left: calc(50% - var(--d) / 2);
+  filter: brightness(0.9);
+}
+
+.right {
+  width: var(--d);
+  height: var(--h);
+  background: var(--color-side);
+  transform: rotateY(90deg) translateZ(calc(var(--w) / 2));
+  left: calc(50% - var(--d) / 2);
+  filter: brightness(0.95);
+}
+
+.top {
+  width: var(--w);
+  height: var(--d);
+  background: var(--color-top);
+  transform: rotateX(90deg) translateZ(calc(var(--h) / 2));
+  top: calc(50% - var(--d) / 2);
+  filter: brightness(1.05);
+}
+
+.bottom {
+  width: var(--w);
+  height: var(--d);
+  background: var(--color-base);
+  transform: rotateX(-90deg) translateZ(calc(var(--h) / 2));
+  top: calc(50% - var(--d) / 2);
+  filter: brightness(0.7);
+}
+
+/* Shadow underneath */
+.shadow {
+  position: absolute;
+  width: 110px;
+  height: 70px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  left: calc(50% - 55px);
+  bottom: -15px;
+  filter: blur(8px);
+  transform: rotateX(80deg);
+  animation: shadowPulse 6s ease-in-out infinite;
+}
+
+/* Floating & Rotational Animation */
+@keyframes floatAndRotate {
+  0% {
+    transform: rotateX(-12deg) rotateY(-20deg) translateY(0);
+  }
+  50% {
+    transform: rotateX(-15deg) rotateY(160deg) translateY(-14px);
+  }
+  100% {
+    transform: rotateX(-12deg) rotateY(340deg) translateY(0);
+  }
+}
+
+@keyframes shadowPulse {
+  0%, 100% {
+    transform: rotateX(80deg) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: rotateX(80deg) scale(0.85);
+    opacity: 0.55;
+  }
+}

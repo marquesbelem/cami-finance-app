@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Trophy, Star, Zap, TrendingDown, Settings, Lock } from "lucide-react";
+import { Trophy, Star, Zap, TrendingDown, Settings, Lock, ChevronDown } from "lucide-react";
+import Capivara3D from "@/components/Capivara3D/Capivara3D";
 import styles from "./AchievementsPanel.module.css";
 
 interface Achievement {
@@ -46,18 +47,18 @@ const TRAIL_LABELS: Record<string, string> = {
 
 // RPG Titles based on user level
 function getCharacterClass(level: number): string {
-  if (level <= 2) return "Poupador Iniciante";
-  if (level <= 4) return "Guerreiro do Débito";
-  if (level <= 6) return "Guardião da Margem";
-  if (level <= 9) return "Paladino das Finanças";
-  return "Mestre da Riqueza";
+  if (level <= 2) return "Capivara Aprendiz";
+  if (level <= 4) return "Capivara Guerreira";
+  if (level <= 6) return "Capivara da Margem";
+  if (level <= 9) return "Capivara Paladina";
+  return "Mestre Capivara";
 }
 
 // RPG Emojis/Avatars based on level
 function getCharacterEmoji(level: number): string {
-  if (level <= 2) return "🌱";
+  if (level <= 2) return "🌾";
   if (level <= 4) return "🛡️";
-  if (level <= 6) return "💰";
+  if (level <= 6) return "🍊";
   if (level <= 9) return "✨";
   return "👑";
 }
@@ -67,6 +68,7 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
   const [stats, setStats] = useState<UserStats | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [treeExpanded, setTreeExpanded] = useState(false);
 
   // Settings form state
   const [budgetLimit, setBudgetLimit] = useState("");
@@ -162,6 +164,11 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
 
   return (
     <aside className={styles.panel} aria-label="Painel de RPG e conquistas">
+      {/* Mascote 3D */}
+      <div className={styles.mascotContainer}>
+        <Capivara3D sizeMultiplier={0.65} />
+      </div>
+
       {/* ── RPG User Profile HUD ── */}
       {stats && (
         <section className={styles.rpgProfile}>
@@ -191,13 +198,19 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
 
       {/* Header */}
       <div className={styles.panelHeader}>
-        <div className={styles.panelTitleRow}>
+        <button
+          className={styles.panelTitleButton}
+          onClick={() => setTreeExpanded((v) => !v)}
+          aria-expanded={treeExpanded}
+          aria-label={treeExpanded ? "Minimizar conquistas" : "Expandir conquistas"}
+        >
           <Trophy size={18} className={styles.trophyIcon} />
           <h2 className={styles.panelTitle}>Árvores de Conquistas</h2>
           <span className={styles.badge}>
             {unlockedCount}/{achievements.length}
           </span>
-        </div>
+          <ChevronDown size={16} className={`${styles.toggleChevron} ${treeExpanded ? styles.toggleChevronOpen : ""}`} />
+        </button>
         <div className={styles.headerActions}>
           <button
             id="open-achievement-settings"
@@ -211,113 +224,117 @@ export default function AchievementsPanel({ onAchievementUnlocked, onSettingsSav
         </div>
       </div>
 
-      {/* Settings panel */}
-      {showSettings && stats && (
-        <form onSubmit={handleSaveSettings} className={styles.inlineForm}>
-          <h3 className={styles.inlineTitle}>⚙ Configurações de RPG</h3>
-          <div className={styles.formGrid}>
-            <div>
-              <label className={styles.inlineLabel} htmlFor="budget-limit">
-                Orçamento HP (%)
-              </label>
-              <input
-                id="budget-limit"
-                type="number"
-                min="0"
-                max="100"
-                step="1"
-                value={budgetLimit}
-                onChange={(e) => setBudgetLimit(e.target.value)}
-                className={styles.inlineInput}
-              />
-            </div>
-            <div>
-              <label className={styles.inlineLabel} htmlFor="credit-limit">
-                Limite do Cartão (R$)
-              </label>
-              <input
-                id="credit-limit"
-                type="number"
-                min="0"
-                step="0.01"
-                value={creditLimit}
-                onChange={(e) => setCreditLimit(e.target.value)}
-                className={styles.inlineInput}
-              />
-            </div>
-            <div>
-              <label className={styles.inlineLabel} htmlFor="salary-amount">
-                Salário Agendado (R$)
-              </label>
-              <input
-                id="salary-amount"
-                type="number"
-                min="0"
-                step="0.01"
-                value={salaryAmount}
-                onChange={(e) => setSalaryAmount(e.target.value)}
-                className={styles.inlineInput}
-              />
-            </div>
-            <div>
-              <label className={styles.inlineLabel} htmlFor="payment-day">
-                Dia do Pagamento (1-31)
-              </label>
-              <input
-                id="payment-day"
-                type="number"
-                min="1"
-                max="31"
-                value={paymentDay}
-                onChange={(e) => setPaymentDay(e.target.value)}
-                className={styles.inlineInput}
-              />
-            </div>
-            <div>
-              <label className={styles.inlineLabel} htmlFor="leisure-budget">
-                Orçamento de Lazer (R$)
-              </label>
-              <input
-                id="leisure-budget"
-                type="number"
-                min="0"
-                step="0.01"
-                value={leisureBudget}
-                onChange={(e) => setLeisureBudget(e.target.value)}
-                className={styles.inlineInput}
-              />
-            </div>
-          </div>
-          <button id="save-settings-btn" type="submit" className={styles.saveBtn}>
-            Salvar Parâmetros
-          </button>
-        </form>
-      )}
+      <div className={`${styles.collapsibleContent} ${treeExpanded ? styles.treeExpanded : ""}`}>
+        <div className={styles.collapsibleInner}>
+          {/* Settings panel */}
+          {showSettings && stats && (
+            <form onSubmit={handleSaveSettings} className={styles.inlineForm}>
+              <h3 className={styles.inlineTitle}>⚙ Configurações de RPG</h3>
+              <div className={styles.formGrid}>
+                <div>
+                  <label className={styles.inlineLabel} htmlFor="budget-limit">
+                    Orçamento HP (%)
+                  </label>
+                  <input
+                    id="budget-limit"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value={budgetLimit}
+                    onChange={(e) => setBudgetLimit(e.target.value)}
+                    className={styles.inlineInput}
+                  />
+                </div>
+                <div>
+                  <label className={styles.inlineLabel} htmlFor="credit-limit">
+                    Limite do Cartão (R$)
+                  </label>
+                  <input
+                    id="credit-limit"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={creditLimit}
+                    onChange={(e) => setCreditLimit(e.target.value)}
+                    className={styles.inlineInput}
+                  />
+                </div>
+                <div>
+                  <label className={styles.inlineLabel} htmlFor="salary-amount">
+                    Salário Agendado (R$)
+                  </label>
+                  <input
+                    id="salary-amount"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={salaryAmount}
+                    onChange={(e) => setSalaryAmount(e.target.value)}
+                    className={styles.inlineInput}
+                  />
+                </div>
+                <div>
+                  <label className={styles.inlineLabel} htmlFor="payment-day">
+                    Dia do Pagamento (1-31)
+                  </label>
+                  <input
+                    id="payment-day"
+                    type="number"
+                    min="1"
+                    max="31"
+                    value={paymentDay}
+                    onChange={(e) => setPaymentDay(e.target.value)}
+                    className={styles.inlineInput}
+                  />
+                </div>
+                <div>
+                  <label className={styles.inlineLabel} htmlFor="leisure-budget">
+                    Orçamento de Lazer (R$)
+                  </label>
+                  <input
+                    id="leisure-budget"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={leisureBudget}
+                    onChange={(e) => setLeisureBudget(e.target.value)}
+                    className={styles.inlineInput}
+                  />
+                </div>
+              </div>
+              <button id="save-settings-btn" type="submit" className={styles.saveBtn}>
+                Salvar Parâmetros
+              </button>
+            </form>
+          )}
 
-      {/* Chained Achievement Trails */}
-      {trails.map((trailType) => {
-        const trailAchievements = achievements
-          .filter((a) => a.type === trailType)
-          .sort((a, b) => a.level - b.level);
+          {/* Chained Achievement Trails */}
+          {trails.map((trailType) => {
+            const trailAchievements = achievements
+              .filter((a) => a.type === trailType)
+              .sort((a, b) => a.level - b.level);
 
-        return (
-          <section key={trailType} className={styles.section}>
-            <h3 className={styles.sectionTitle}>{TRAIL_LABELS[trailType]}</h3>
-            <div className={styles.trailContainer}>
-              {trailAchievements.map((ach) => {
-                const locked = isChainedLocked(ach);
-                return (
-                  <AchievementCard key={ach.id} achievement={ach} isLocked={locked} />
-                );
-              })}
-            </div>
-          </section>
-        );
-      })}
+            return (
+              <section key={trailType} className={styles.section}>
+                <h3 className={styles.sectionTitle}>{TRAIL_LABELS[trailType]}</h3>
+                <div className={styles.trailContainer}>
+                  {trailAchievements.map((ach) => {
+                    const locked = isChainedLocked(ach);
+                    return (
+                      <AchievementCard key={ach.id} achievement={ach} isLocked={locked} />
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
 
-      {achievements.length === 0 && (
-        <p className={styles.empty}>Nenhuma conquista disponível no momento.</p>
-      )}
+          {achievements.length === 0 && (
+            <p className={styles.empty}>Nenhuma conquista disponível no momento.</p>
+          )}
+        </div>
+      </div>
     </aside>
   );
 }

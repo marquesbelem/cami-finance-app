@@ -64,7 +64,7 @@
     {
       "id": "2fad53bb-345e-47ae-8453-58d381604275",
       "title": "Sem Cartão",
-      "description": "Pague todos os boletos do mês sem usar o cartão de crédito.",
+      "description": "Pague todas as despesas do mês sem usar o cartão de crédito.",
       "type": "STREAK",
       "conditionValue": 30,
       "isUnlocked": false,

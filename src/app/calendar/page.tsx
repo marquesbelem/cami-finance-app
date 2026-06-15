@@ -11,7 +11,7 @@ import {
 import CalendarHeader from "@/components/Calendar/CalendarHeader";
 import CalendarGrid from "@/components/Calendar/CalendarGrid";
 import DayDetailPanel from "@/components/Calendar/DayDetailPanel";
-import AdicionarBoleto from "@/components/AdicionarBoleto/AdicionarBoleto";
+import AdicionarDespesa from "@/components/AdicionarDespesa/AdicionarDespesa";
 import Celebration, { useToasts } from "@/components/Achievements/Celebration";
 import styles from "./calendar.module.css";
 
@@ -41,7 +41,7 @@ export default function CalendarPage() {
     } catch {
       addToast({
         title: "Erro",
-        message: "Falha ao carregar boletos.",
+        message: "Falha ao carregar despesas.",
         type: "danger",
       });
     } finally {
@@ -52,6 +52,71 @@ export default function CalendarPage() {
   useEffect(() => {
     loadSlips();
   }, [loadSlips]);
+
+  // ── Native notifications verification ─────────────────────────────────────
+  useEffect(() => {
+    if (slips.length === 0) return;
+
+    if (typeof window !== "undefined" && "Notification" in window) {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      const yyyy = tomorrow.getFullYear();
+      const mm = String(tomorrow.getMonth() + 1).padStart(2, "0");
+      const dd = String(tomorrow.getDate()).padStart(2, "0");
+      const tomorrowStr = `${yyyy}-${mm}-${dd}`;
+
+      const upcoming = slips.filter((s) => {
+        if (s.status !== "PENDENTE") return false;
+        const dateStr = s.dueDate.slice(0, 10);
+        return dateStr === tomorrowStr;
+      });
+
+      if (upcoming.length > 0) {
+        const todayStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
+        const storageKey = `notified_expenses_${todayStr}`;
+        const notifiedIdsRaw = localStorage.getItem(storageKey);
+        const notifiedIds = notifiedIdsRaw ? JSON.parse(notifiedIdsRaw) : [];
+
+        const toNotify = upcoming.filter((s) => !notifiedIds.includes(s.id));
+
+        if (toNotify.length > 0) {
+          const triggerNotifications = () => {
+            if (toNotify.length === 1) {
+              const slip = toNotify[0];
+              const formattedAmount = slip.amount.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              });
+              new Notification("⚠️ Despesa Vencendo Amanhã!", {
+                body: `A despesa "${slip.title}" (${formattedAmount}) vence amanhã. Não se esqueça de pagar!`,
+                icon: "/favicon.ico",
+              });
+            } else {
+              new Notification("⚠️ Despesas Vencendo Amanhã!", {
+                body: `Você tem ${toNotify.length} despesas vencendo amanhã. Toque para verificar seu painel!`,
+                icon: "/favicon.ico",
+              });
+            }
+
+            const newNotifiedIds = [...notifiedIds, ...toNotify.map((s) => s.id)];
+            localStorage.setItem(storageKey, JSON.stringify(newNotifiedIds));
+          };
+
+          if (Notification.permission === "default") {
+            Notification.requestPermission().then((permission) => {
+              if (permission === "granted") {
+                triggerNotifications();
+              }
+            });
+          } else if (Notification.permission === "granted") {
+            triggerNotifications();
+          }
+        }
+      }
+    }
+  }, [slips]);
 
   // ── Calendar View Model ────────────────────────────────────────────────────
   // Recomputed only when slips or selectedMonth changes — O(n) + memoised.
@@ -130,7 +195,7 @@ export default function CalendarPage() {
       // Check XP metadata for debit/PIX payment
       const xpDetails = (updated as any).xpDetails;
       if (xpDetails) {
-        showXpToast(xpDetails.xpGained, "Boleto pago no Débito ou PIX!");
+        showXpToast(xpDetails.xpGained, "Despesa paga no Débito ou PIX!");
         if (xpDetails.leveledUp) {
           setTimeout(() => {
             showLevelUpToast(xpDetails.newLevel);
@@ -170,7 +235,7 @@ export default function CalendarPage() {
       return [...prev, saved];
     });
     addToast({
-      title: "Boleto adicionado",
+      title: "Despesa adicionada",
       message: saved.title,
       type: "success",
     });
@@ -233,7 +298,7 @@ export default function CalendarPage() {
           {/* Celebration empty state */}
           <div className={styles.emptyState}>
             <span className={styles.emptyEmoji}>🎉</span>
-            <p className={styles.emptyTitle}>Mês livre de boletos!</p>
+            <p className={styles.emptyTitle}>Mês livre de despesas!</p>
             <p className={styles.emptySubtitle}>
               Parece que você está em festa — nenhum vencimento este mês.
             </p>
@@ -259,7 +324,7 @@ export default function CalendarPage() {
       />
 
       {/* Add bill modal (reused from existing feature) */}
-      <AdicionarBoleto
+      <AdicionarDespesa
         isOpen={isFormOpen}
         onClose={closeForm}
         onSave={handleSave}

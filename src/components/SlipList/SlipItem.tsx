@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Trash2, FileText, CreditCard, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { Pencil, Trash2, FileText, CreditCard, AlertCircle, CheckCircle2, Clock, Repeat } from "lucide-react";
 import styles from "./SlipItem.module.css";
 
 interface Category {
@@ -18,6 +18,7 @@ export interface Slip {
   dueDate: string;
   status: string;
   isCreditCardPayment: boolean;
+  isRecurring: boolean;
   categoryId: string;
   documentPath: string | null;
   category: Category;
@@ -70,7 +71,7 @@ export default function SlipItem({ slip, onEdit, onDelete, onStatusToggle }: Pro
   return (
     <article
       className={`${styles.item} ${styles[`state_${state}`]}`}
-      aria-label={`Boleto: ${slip.title}`}
+      aria-label={`Despesa: ${slip.title}`}
     >
       {/* Color accent bar */}
       <span
@@ -93,6 +94,11 @@ export default function SlipItem({ slip, onEdit, onDelete, onStatusToggle }: Pro
             {slip.isCreditCardPayment && (
               <span className={styles.creditBadge} title="Cartão de Crédito">
                 <CreditCard size={12} />
+              </span>
+            )}
+            {slip.isRecurring && (
+              <span className={styles.recurringBadge} title="Despesa Recorrente">
+                <Repeat size={12} />
               </span>
             )}
           </div>
@@ -148,7 +154,7 @@ export default function SlipItem({ slip, onEdit, onDelete, onStatusToggle }: Pro
           id={`edit-slip-${slip.id}`}
           className={`${styles.actionBtn} ${styles.editBtn}`}
           onClick={() => onEdit(slip)}
-          title="Editar boleto"
+          title="Editar despesa"
           aria-label={`Editar ${slip.title}`}
         >
           <Pencil size={15} />
@@ -158,7 +164,7 @@ export default function SlipItem({ slip, onEdit, onDelete, onStatusToggle }: Pro
           id={`delete-slip-${slip.id}`}
           className={`${styles.actionBtn} ${confirming ? styles.deleteConfirm : styles.deleteBtn}`}
           onClick={handleDeleteClick}
-          title={confirming ? "Clique novamente para confirmar" : "Excluir boleto"}
+          title={confirming ? "Clique novamente para confirmar" : "Excluir despesa"}
           aria-label={confirming ? "Confirmar exclusão" : `Excluir ${slip.title}`}
         >
           <Trash2 size={15} />

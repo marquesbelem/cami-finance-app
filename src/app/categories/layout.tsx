@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gerenciar Categorias – Cami Finance",
+  title: "Gerenciar Categorias – Capivara Poupadora",
   description:
-    "Crie, edite e organize as categorias de gastos dos seus boletos. Mantenha suas finanças organizadas por tipo de despesa.",
+    "Crie, edite e organize as categorias de gastos das suas despesas. Mantenha suas finanças organizadas por tipo de despesa.",
 };
 
 export default function CategoriesLayout({

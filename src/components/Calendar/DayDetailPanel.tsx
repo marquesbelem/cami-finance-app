@@ -82,7 +82,7 @@ export default function DayDetailPanel({
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={`Boletos do dia ${formatPanelDate(dateKey)}`}
+        aria-label={`Despesas do dia ${formatPanelDate(dateKey)}`}
         className={styles.panel}
       >
         {/* Header */}
@@ -105,16 +105,16 @@ export default function DayDetailPanel({
             <div className={styles.panelEmpty}>
               <span className={styles.panelEmptyIcon}>📭</span>
               <p className={styles.panelEmptyText}>
-                Nenhum boleto neste dia.
+                Nenhuma despesa neste dia.
               </p>
               <button
                 id={`panel-add-bill-${dateKey}`}
                 className={styles.panelAddBtn}
                 onClick={onAddBill}
-                aria-label="Adicionar boleto para este dia"
+                aria-label="Adicionar despesa para este dia"
               >
                 <Plus size={16} />
-                Adicionar Boleto
+                Adicionar Despesa
               </button>
             </div>
           ) : (
@@ -206,11 +206,11 @@ export default function DayDetailPanel({
               id={`panel-footer-add-${dateKey}`}
               className={styles.panelAddBtn}
               onClick={onAddBill}
-              aria-label="Adicionar novo boleto"
+              aria-label="Adicionar nova despesa"
               style={{ width: "100%", justifyContent: "center" }}
             >
               <Plus size={16} />
-              Adicionar Boleto
+              Adicionar Despesa
             </button>
           </div>
         )}

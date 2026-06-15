@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Capivara3D from "@/components/Capivara3D/Capivara3D";
 import styles from "./AuthProvider.module.css";
 
 // ── Global Fetch Interceptor ────────────────────────────────────────────────
@@ -120,10 +121,12 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       <main className={styles.authContainer} id="auth-gate-root">
         <div className={styles.authCard}>
           <header className={styles.authHeader}>
-            <span className={styles.logoIcon}>💎</span>
-            <h1 className={styles.title}>Cami Finance</h1>
+            <div className={styles.logo3d}>
+              <Capivara3D sizeMultiplier={0.7} />
+            </div>
+            <h1 className={styles.title}>Capivara Poupadora</h1>
             <p className={styles.subtitle}>
-              Seu painel financeiro pessoal, moderno e gamificado.
+              Seu painel financeiro pessoal, moderno e gamificado com capivaras!
             </p>
           </header>
 

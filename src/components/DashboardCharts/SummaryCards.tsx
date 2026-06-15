@@ -97,7 +97,7 @@ export default function SummaryCards({ slips, budgetLimit, loading }: Props) {
             {formatCurrency(paidTotal)}
           </span>
           <span className={styles.sub}>
-            {slips.filter((s) => s.status === "PAGO").length} boletos defendidos
+            {slips.filter((s) => s.status === "PAGO").length} despesas defendidas
           </span>
         </div>
       </article>

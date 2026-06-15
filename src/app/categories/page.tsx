@@ -98,7 +98,7 @@ export default function CategoriesPage() {
             <p className={styles.pageSubtitle}>
               {categories.length > 0
                 ? `${categories.length} ${categories.length === 1 ? "categoria" : "categorias"}`
-                : "Organize seus boletos por tipo de gasto"}
+                : "Organize suas despesas por tipo de gasto"}
             </p>
           </div>
           <button

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, Upload, Calendar, DollarSign, Tag, CreditCard } from "lucide-react";
-import styles from "./AdicionarBoleto.module.css";
+import { createPortal } from "react-dom";
+import { X, Upload, Calendar, DollarSign, Tag, CreditCard, Repeat } from "lucide-react";
+import styles from "./AdicionarDespesa.module.css";
 
 interface Category {
   id: string;
@@ -18,6 +19,7 @@ interface Slip {
   dueDate: string;
   status: string;
   isCreditCardPayment: boolean;
+  isRecurring: boolean;
   categoryId: string;
   documentPath: string | null;
   category: Category;
@@ -38,19 +40,80 @@ function getTodayDateString(): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }: Props) {
+export default function AdicionarDespesa({ isOpen, onClose, onSave, editingSlip }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [dueDate, setDueDate] = useState(getTodayDateString());
+  const [dueDateText, setDueDateText] = useState("");
   const [status, setStatus] = useState("PENDENTE");
   const [categoryId, setCategoryId] = useState("");
   const [isCreditCardPayment, setIsCreditCardPayment] = useState(false);
+  const [isRecurring, setIsRecurring] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  // Convert YYYY-MM-DD to DD/MM/AAAA
+  const formatToDisplay = (ymd: string) => {
+    if (!ymd) return "";
+    const parts = ymd.split("-");
+    if (parts.length !== 3) return ymd;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  };
+
+  // Convert DD/MM/AAAA to YYYY-MM-DD
+  const formatToYmd = (dma: string) => {
+    const parts = dma.split("/");
+    if (parts.length !== 3) return "";
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  };
+
+  const handleDateTextChange = (val: string) => {
+    // Keep only digits, max 8 digits for formatting
+    const cleanDigits = val.replace(/\D/g, "").slice(0, 8);
+    let formatted = cleanDigits;
+    
+    if (cleanDigits.length > 2 && cleanDigits.length <= 4) {
+      formatted = `${cleanDigits.slice(0, 2)}/${cleanDigits.slice(2)}`;
+    } else if (cleanDigits.length > 4) {
+      formatted = `${cleanDigits.slice(0, 2)}/${cleanDigits.slice(2, 4)}/${cleanDigits.slice(4, 8)}`;
+    }
+    
+    setDueDateText(formatted);
+
+    // If fully typed, update the state used for payload/native input
+    if (cleanDigits.length === 8) {
+      const ymd = formatToYmd(formatted);
+      setDueDate(ymd);
+    } else {
+      setDueDate("");
+    }
+  };
+
+  const handleNativeDateChange = (val: string) => {
+    if (!val) return;
+    setDueDate(val);
+    setDueDateText(formatToDisplay(val));
+  };
+
+  const handleCalendarClick = () => {
+    try {
+      dateInputRef.current?.showPicker();
+    } catch {
+      dateInputRef.current?.focus();
+    }
+  };
+
+  // Set mounted state on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load categories on mount
   useEffect(() => {
@@ -65,10 +128,13 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
     if (editingSlip) {
       setTitle(editingSlip.title);
       setAmount(editingSlip.amount.toString());
-      setDueDate(editingSlip.dueDate.slice(0, 10));
+      const datePart = editingSlip.dueDate.slice(0, 10);
+      setDueDate(datePart);
+      setDueDateText(formatToDisplay(datePart));
       setStatus(editingSlip.status);
       setCategoryId(editingSlip.categoryId);
       setIsCreditCardPayment(editingSlip.isCreditCardPayment);
+      setIsRecurring((editingSlip as any).isRecurring ?? false);
     } else {
       resetForm();
     }
@@ -77,7 +143,6 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
   // Auto-focus the title field whenever the modal opens
   useEffect(() => {
     if (!isOpen) return;
-    // Small delay lets the modal finish rendering before focusing
     const id = setTimeout(() => titleInputRef.current?.focus(), 50);
     return () => clearTimeout(id);
   }, [isOpen]);
@@ -85,10 +150,13 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
   function resetForm() {
     setTitle("");
     setAmount("");
-    setDueDate(getTodayDateString());
+    const today = getTodayDateString();
+    setDueDate(today);
+    setDueDateText(formatToDisplay(today));
     setStatus("PENDENTE");
     setCategoryId(categories[0]?.id ?? "");
     setIsCreditCardPayment(false);
+    setIsRecurring(false);
     setFile(null);
     setError("");
   }
@@ -102,12 +170,12 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
     if (isNaN(parsedAmount) || parsedAmount <= 0) { setError("Valor deve ser positivo."); return; }
     
     if (!dueDate) {
-      setError("Data de vencimento é obrigatória.");
+      setError("Data de vencimento é obrigatória (formato DD/MM/AAAA).");
       return;
     }
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(dueDate)) {
-      setError("Formato de data inválido. Por favor, selecione uma data válida.");
+      setError("Formato de data inválido. Por favor, insira no formato DD/MM/AAAA.");
       return;
     }
     const dateParts = dueDate.split("-");
@@ -127,6 +195,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
     formData.append("dueDate", dueDate);
     formData.append("status", status);
     formData.append("isCreditCardPayment", isCreditCardPayment.toString());
+    formData.append("isRecurring", isRecurring.toString());
     formData.append("categoryId", categoryId);
     if (file) formData.append("document", file);
 
@@ -138,7 +207,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error ?? "Erro ao salvar boleto.");
+        throw new Error(data.error ?? "Erro ao salvar despesa.");
       }
 
       const saved: Slip = await res.json();
@@ -153,14 +222,18 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
   }
 
   if (!isOpen) return null;
+  if (!mounted) return null;
 
-  return (
+  const portalRoot = document.getElementById("portal-root");
+  if (!portalRoot) return null;
+
+  return createPortal(
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="form-title">
       <div className={styles.modal}>
         {/* Header */}
         <div className={styles.header}>
           <h2 id="form-title" className={styles.title}>
-            {editingSlip ? "Editar Boleto" : "Adicionar Boleto"}
+            {editingSlip ? "Editar Despesa" : "Adicionar Despesa"}
           </h2>
           <button
             id="close-modal-btn"
@@ -217,14 +290,36 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
               <label htmlFor="slip-due-date" className={styles.label}>
                 <Calendar size={14} /> Vencimento <span className={styles.requiredAsterisk}>*</span>
               </label>
-              <input
-                id="slip-due-date"
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className={styles.input}
-                required
-              />
+              <div className={styles.dateInputWrapper}>
+                <input
+                  id="slip-due-date"
+                  type="text"
+                  placeholder="DD/MM/AAAA"
+                  value={dueDateText}
+                  onChange={(e) => handleDateTextChange(e.target.value)}
+                  className={styles.input}
+                  maxLength={10}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.calendarPickerBtn}
+                  onClick={handleCalendarClick}
+                  aria-label="Abrir calendário"
+                >
+                  <Calendar size={16} />
+                </button>
+                {/* Hidden native input for date picker invocation */}
+                <input
+                  ref={dateInputRef}
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => handleNativeDateChange(e.target.value)}
+                  className={styles.hiddenNativeDateInput}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                />
+              </div>
             </div>
           </div>
 
@@ -237,7 +332,15 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
               <select
                 id="slip-category"
                 value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
+                onChange={(e) => {
+                  const newCatId = e.target.value;
+                  setCategoryId(newCatId);
+                  // Auto-set status to PAGO when selecting Lazer
+                  const selectedCat = categories.find((c) => c.id === newCatId);
+                  if (selectedCat?.name === "Lazer") {
+                    setStatus("PAGO");
+                  }
+                }}
                 className={styles.input}
                 required
               >
@@ -279,6 +382,25 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
               onClick={() => setIsCreditCardPayment((v) => !v)}
               tabIndex={0}
               onKeyDown={(e) => e.key === " " && setIsCreditCardPayment((v) => !v)}
+            >
+              <span className={styles.toggleThumb} />
+            </div>
+          </label>
+
+          {/* Recurring toggle */}
+          <label className={styles.toggleRow} htmlFor="slip-recurring">
+            <div className={styles.toggleInfo}>
+              <Repeat size={16} />
+              <span>Despesa recorrente (mensal)</span>
+            </div>
+            <div
+              id="slip-recurring"
+              role="switch"
+              aria-checked={isRecurring}
+              className={`${styles.toggle} ${isRecurring ? styles.toggleOn : ""}`}
+              onClick={() => setIsRecurring((v) => !v)}
+              tabIndex={0}
+              onKeyDown={(e) => e.key === " " && setIsRecurring((v) => !v)}
             >
               <span className={styles.toggleThumb} />
             </div>
@@ -339,6 +461,7 @@ export default function AdicionarBoleto({ isOpen, onClose, onSave, editingSlip }
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    portalRoot
   );
 }

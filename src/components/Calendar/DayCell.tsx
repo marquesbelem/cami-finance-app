@@ -25,7 +25,7 @@ function DayCell({ day, isSelected, onSelect, tabIndex, cellRef }: DayCellProps)
   const overflowCount = slipCount - CHIP_LIMIT;
 
   const weekdayLabel = date.toLocaleDateString("pt-BR", { weekday: "long" });
-  const ariaLabel = `${weekdayLabel}, ${dayNumber} de ${date.toLocaleDateString("pt-BR", { month: "long" })}${slipCount > 0 ? `, ${slipCount} boleto${slipCount > 1 ? "s" : ""}` : ", sem boletos"}`;
+  const ariaLabel = `${weekdayLabel}, ${dayNumber} de ${date.toLocaleDateString("pt-BR", { month: "long" })}${slipCount > 0 ? `, ${slipCount} despesa${slipCount > 1 ? "s" : ""}` : ", sem despesas"}`;
 
   function handleClick() {
     if (!isCurrentMonth) return;
@@ -84,7 +84,7 @@ function DayCell({ day, isSelected, onSelect, tabIndex, cellRef }: DayCellProps)
             <button
               className={styles.overflowBtn}
               aria-expanded={isSelected}
-              aria-label={`Ver mais ${overflowCount} boleto${overflowCount > 1 ? "s" : ""}`}
+              aria-label={`Ver mais ${overflowCount} despesa${overflowCount > 1 ? "s" : ""}`}
               tabIndex={-1}
             >
               +{overflowCount} mais

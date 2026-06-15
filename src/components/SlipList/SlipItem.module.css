@@ -93,6 +93,16 @@
   flex-shrink: 0;
 }
 
+.recurringBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+  flex-shrink: 0;
+}
+
 .amount {
   font-family: var(--font-display);
   font-size: var(--text-lg);

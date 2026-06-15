@@ -1,7 +1,7 @@
 /* ── Toast Host ─────────────────────────────────────────────────────────────── */
 .host {
   position: fixed;
-  bottom: var(--space-6);
+  top: calc(var(--space-6) + env(safe-area-inset-top, 0px));
   right: var(--space-6);
   display: flex;
   flex-direction: column;
@@ -34,13 +34,13 @@
 }
 
 @keyframes slideInToast {
-  from { opacity: 0; transform: translateX(40px) scale(0.92); }
-  to   { opacity: 1; transform: translateX(0) scale(1); }
+  from { opacity: 0; transform: translateY(-40px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes slideOutToast {
-  from { opacity: 1; transform: translateX(0) scale(1); }
-  to   { opacity: 0; transform: translateX(40px) scale(0.92); }
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-40px) scale(0.92); }
 }
 
 /* Type variants */
@@ -176,7 +176,7 @@
 /* Toast XP Variant */
 .toast_xp {
   border-left: 4px solid #6366f1;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, var(--color-bg-elevated) 100%);
+  background: linear-gradient(135deg, #1d1b36 0%, var(--color-bg-elevated) 100%);
 }
 .toast_xp :global(.iconWrap) {
   background: rgba(99, 102, 241, 0.15) !important;
@@ -186,7 +186,7 @@
 /* Toast Levelup Variant */
 .toast_levelup {
   border-left: 4px solid #a855f7;
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, var(--color-bg-elevated) 100%);
+  background: linear-gradient(135deg, #281938 0%, var(--color-bg-elevated) 100%);
   animation: levelupSlideIn var(--transition-spring) both, levelupPulse 3s infinite alternate 0.5s;
   box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
 }
@@ -197,8 +197,8 @@
 }
 
 @keyframes levelupSlideIn {
-  from { opacity: 0; transform: translateX(50px) scale(0.9); }
-  to { opacity: 1; transform: translateX(0) scale(1); }
+  from { opacity: 0; transform: translateY(-40px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes levelupPulse {
@@ -377,13 +377,13 @@
   }
 }
 
-/* ── Mobile Overrides ──────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .host {
-    /* On mobile: stretch across the bottom, centred */
+    /* On mobile: stretch across the top, centred */
     right: var(--space-3);
     left: var(--space-3);
-    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
+    bottom: auto;
     align-items: stretch;
   }
 

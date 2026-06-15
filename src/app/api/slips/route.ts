@@ -14,11 +14,69 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const month = searchParams.get("month"); // e.g. "2026-06"
 
+    // Auto-generate recurring slips for this month if needed
+    if (month) {
+      const [year, mon] = month.split("-").map(Number);
+      const start = new Date(year, mon - 1, 1);
+      const end = new Date(year, mon, 1);
+
+      // Get the latest slip for each unique title + categoryId combination to determine recurrence status
+      const allSlips = await prisma.paymentSlip.findMany({
+        where: { userId },
+        orderBy: { dueDate: "desc" },
+      });
+
+      const latestSlipsMap = new Map<string, typeof allSlips[0]>();
+      for (const slip of allSlips) {
+        const key = `${slip.title}-${slip.categoryId}`;
+        if (!latestSlipsMap.has(key)) {
+          latestSlipsMap.set(key, slip);
+        }
+      }
+
+      const recurringSlips = Array.from(latestSlipsMap.values()).filter(
+        (slip) => slip.isRecurring
+      );
+
+      for (const rs of recurringSlips) {
+        // Check if a slip with same title+category already exists in this month
+        const exists = await prisma.paymentSlip.findFirst({
+          where: {
+            userId,
+            title: rs.title,
+            categoryId: rs.categoryId,
+            dueDate: { gte: start, lt: end },
+          },
+        });
+
+        if (!exists) {
+          const day = rs.recurringDay ?? rs.dueDate.getDate();
+          // Clamp day to max days in target month
+          const maxDay = new Date(year, mon, 0).getDate();
+          const clampedDay = Math.min(day, maxDay);
+
+          await prisma.paymentSlip.create({
+            data: {
+              title: rs.title,
+              amount: rs.amount,
+              dueDate: new Date(year, mon - 1, clampedDay),
+              status: "PENDENTE",
+              isCreditCardPayment: rs.isCreditCardPayment,
+              isRecurring: true,
+              recurringDay: rs.recurringDay,
+              categoryId: rs.categoryId,
+              userId,
+            },
+          });
+        }
+      }
+    }
+
     let whereClause: any = { userId };
     if (month) {
       const [year, mon] = month.split("-").map(Number);
       const start = new Date(year, mon - 1, 1);
-      const end = new Date(year, mon, 1); // exclusive
+      const end = new Date(year, mon, 1);
       whereClause.dueDate = { gte: start, lt: end };
     }
 
@@ -32,7 +90,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[GET /api/slips]", error);
     return NextResponse.json(
-      { error: "Falha ao carregar boletos" },
+      { error: "Falha ao carregar despesas" },
       { status: 500 }
     );
   }
@@ -54,6 +112,7 @@ export async function POST(request: NextRequest) {
     const status = formData.get("status") as any; // SlipStatus enum
     const isCreditCardPayment =
       formData.get("isCreditCardPayment") === "true";
+    const isRecurring = formData.get("isRecurring") === "true";
     const categoryId = formData.get("categoryId") as string;
     const file = formData.get("document") as File | null;
 
@@ -77,6 +136,8 @@ export async function POST(request: NextRequest) {
         dueDate,
         status,
         isCreditCardPayment,
+        isRecurring,
+        recurringDay: isRecurring ? dueDate.getDate() : null,
         categoryId,
         documentPath,
         userId,
@@ -100,7 +161,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[POST /api/slips]", error);
     return NextResponse.json(
-      { error: "Falha ao criar boleto" },
+      { error: "Falha ao criar despesa" },
       { status: 500 }
     );
   }

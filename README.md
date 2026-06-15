@@ -4,10 +4,10 @@ Um painel financeiro pessoal moderno e interativo com conquistas gamificadas e e
 
 ## ✨ Funcionalidades
 
-- **📄 Gestão de Boletos (CRUD)** — Adicione, edite, exclua e alterne o pagamento de boletos com upload de comprovantes (PDF/imagem).
+- **📄 Gestão de Despesas (CRUD)** — Adicione, edite, exclua e alterne o pagamento de despesas com upload de comprovantes (PDF/imagem).
 - **📊 Dashboard Mensal** — Navegue entre meses e visualize gráficos interativos de rosca por categoria e de barras de gastos.
-- **🛡️ HUD de RPG e Barra de HP (Orçamento)** — Seu limite mensal é o seu HP (Pontos de Vida). A barra drena dinamicamente e muda de cor: verde (saudável), amarelo (alerta) e vermelho piscante (crítico <20% com animação de batimentos no coração).
-- **⭐ Nível e Progressão de XP** — Ganhe XP ao adicionar boletos (+10 XP), manter a consistência diária (+20 XP de bônus por streak) e realizar pagamentos via PIX ou Débito (+25 XP). Suba de nível e mude de classe (ex: *Guerreiro do Débito*, *Paladino das Finanças*).
+- **🛡️ HUD de RPG e Barra de HP (Orçamento)** — Seu limite mensal é o seu HP (Pontos de Vida). A barra drena dinamicamente e muda de col: verde (saudável), amarelo (alerta) e vermelho piscante (crítico <20% com animação de batimentos no coração).
+- **⭐ Nível e Progressão de XP** — Ganhe XP ao adicionar despesas (+10 XP), manter a consistência diária (+20 XP de bônus por streak) e realizar pagamentos via PIX ou Débito (+25 XP). Suba de nível e mude de classe (ex: *Guerreiro do Débito*, *Paladino das Finanças*).
 - **🏆 Três Árvores de Conquistas Encadeadas** — Três trilhas com progressão bloqueada por nível (você precisa desbloquear o Nível 1 antes de progredir para o Nível 2):
   1. **Trilha Redução de Cartão** (metas de gastos abaixo de 40%, 20% e 0% do limite).
   2. **Trilha Consistência** (ficar 3, 7 e 30 dias seguidos sem usar o cartão).
@@ -101,7 +101,7 @@ prisma/
 └── data-export.json # Dump dos dados exportados (git ignorado)
 
 public/
-└── uploads/         # Documentos PDF/imagem anexados aos boletos
+└── uploads/         # Documentos PDF/imagem anexados às despesas
 ```
 src/
 ├── app/
@@ -116,8 +116,8 @@ src/
 │   ├── page.tsx             # Dashboard principal
 │   └── page.module.css      # Estilos do dashboard
 ├── components/
-│   ├── AdicionarBoleto/     # Modal de formulário CRUD
-│   ├── SlipList/            # Item de boleto com ações
+│   ├── AdicionarDespesa/    # Modal de formulário CRUD
+│   ├── SlipList/            # Item de despesa com ações
 │   ├── DashboardCharts/     # Gráficos (Recharts) e cards de resumo
 │   └── Achievements/        # Painel de conquistas e toasts
 └── lib/
@@ -131,9 +131,9 @@ src/
 ### 1. Sistema de Níveis e XP (Experiência)
 A progressão do usuário é baseada em acúmulo de XP, onde a meta para o próximo nível escala dinamicamente como `Nível Atual * 100` XP.
 As fontes de ganho de XP são:
-* **📝 Registro Diário (+10 XP)**: Concedido ao criar ou atualizar um boleto.
-* **🔥 Bônus de Consistência (+20 XP)**: Concedido como bônus ao registrar boletos em dias seguidos (sequência de registro).
-* **🛡️ Pagamento Saudável (+25 XP)**: Concedido ao marcar um boleto como pago no **Débito** ou **PIX** (onde `isCreditCardPayment === false`).
+* **📝 Registro Diário (+10 XP)**: Concedido ao criar ou atualizar uma despesa.
+* **🔥 Bônus de Consistência (+20 XP)**: Concedido como bônus ao registrar despesas em dias seguidos (sequência de registro).
+* **🛡️ Pagamento Saudável (+25 XP)**: Concedido ao marcar uma despesa como paga no **Débito** ou **PIX** (onde `isCreditCardPayment === false`).
 
 ### 2. Árvores de Conquistas Encadeadas
 As 9 conquistas padrão do sistema são divididas em 3 trilhas principais de 3 níveis cada. O progresso e desbloqueio do **Nível N+1** de uma trilha está **bloqueado em cadeia** até que o **Nível N** correspondente seja desbloqueado:
@@ -150,7 +150,7 @@ As 9 conquistas padrão do sistema são divididas em 3 trilhas principais de 3 n
 | | Nv.2 | Investidor Iniciante | Economizar/guardar pelo menos 50% da receita mensal. |
 | | Nv.3 | Independência Financeira | Economizar/guardar pelo menos 70% da receita mensal. |
 
-*O motor de regras avalia o progresso e desbloqueio a cada alteração, deleção ou marcação de boletos.*
+*O motor de regras avalia o progresso e desbloqueio a cada alteração, deleção ou marcação de despesas.*
 
 ## 📋 Cenários de Verificação
 

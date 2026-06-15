@@ -90,7 +90,7 @@ export default function CategoryCard({ category, onEdit, onDelete }: Props) {
 
         {/* Slip count */}
         <span className={styles.slipCount} style={badgeStyle}>
-          {slipCount} {slipCount === 1 ? "boleto" : "boletos"}
+          {slipCount} {slipCount === 1 ? "despesa" : "despesas"}
         </span>
       </div>
 
@@ -132,7 +132,7 @@ export default function CategoryCard({ category, onEdit, onDelete }: Props) {
       {/* Inline confirmation message */}
       {confirming && (
         <div className={styles.confirmBanner} role="alert">
-          <span>Boletos serão movidos para &quot;Sem Categoria&quot;. Clique em excluir novamente para confirmar.</span>
+          <span>Despesas serão movidas para &quot;Sem Categoria&quot;. Clique em excluir novamente para confirmar.</span>
           <button
             id={`delete-cancel-btn`}
             className={styles.cancelConfirmBtn}
